@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<roomLightColorsAndSequence>
+    <lightColorLibrary>
+        <lightColorSetting name="all" R="255" G="255" B="255" Y="255" W="255" YG="255" P="255" /> <!-- 7ch color betw 0-255 -->
+        <lightColorSetting name="off" R="0" G="0" B="0" Y="0" W="0" YG="0" P="0" />
+        <lightColorSetting name="red" R="220" G="20" B="20" Y="180" W="100" YG="20" P="190" />
+        <lightColorSetting name="brightRed" R="255" G="166" B="47" Y="180" W="220" YG="20" P="250" />
+        <lightColorSetting name="white" R="220" G="220" B="220" Y="180" W="255" YG="60" P="60" />
+        <lightColorSetting name="pulsedUp" R="255" G="255" B="209" Y="180" W="200" YG="60" P="60" />
+        <lightColorSetting name="genericHighlight" R="124" G="182" B="215" Y="60" W="200" YG="60" P="50" />
+        <lightColorSetting name="sickPerson" R="192" G="215" B="124" Y="200" W="100" YG="220" P="20" />
+        <lightColorSetting name="dullRed" R="210" G="76" B="65" Y="180" W="100" YG="20" P="100" />
+        <lightColorSetting name="blueFeeling" R="82" G="57" B="212" Y="20" W="180" YG="20" P="220" />
+        <lightColorSetting name="weatherBlue" R="96" G="166" B="255" Y="20" W="220" YG="80" P="180" />
+        <lightColorSetting name="gabeRedStove" R="153" G="0" B="0" Y="255" W="0" YG="0" P="0" />
+        <lightColorSetting name="gabehighlightperson" R="218" G="0" B="0" Y="0" W="0" YG="216" P="0" />
+        <lightColorSetting name="gabehighlightnextdoor" R="255" G="0" B="0" Y="85" W="0" YG="0" P="0" />
+        <lightColorSetting name="gabeluggage" R="179" G="202" B="0" Y="85" W="0" YG="0" P="0" />
+        <lightColorSetting name="gaberoomwashred" R="255" G="0" B="0" Y="0" W="0" YG="0" P="0" />
+    </lightColorLibrary>
+    <roomLightSequencerRunOfShow>
+        <adjustmentPoint timeStamp="0.1" rampTimeSeconds="0.5"> <!-- running @ 60fps -->
+            <adjustLight light="1" brightness="0" color="off"  /> <!-- brightness betw 0-255 -->
+            <adjustLight light="2" brightness="0" color="off"  />
+            <adjustLight light="3" brightness="0" color="off"  />
+            <adjustLight light="4" brightness="0" color="off"  />
+            <adjustLight light="5" brightness="0" color="off"  />
+            <adjustLight light="6" brightness="0" color="off"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="0.8" rampTimeSeconds="1.2"> <!-- pulse all lights up -->
+            <adjustLight light="1" brightness="200" color="pulsedUp"  />
+            <adjustLight light="2" brightness="200" color="pulsedUp"  />
+            <adjustLight light="3" brightness="200" color="pulsedUp"  />
+            <adjustLight light="4" brightness="200" color="pulsedUp"  />
+            <adjustLight light="5" brightness="200" color="pulsedUp"  />
+            <adjustLight light="6" brightness="200" color="pulsedUp"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="3" rampTimeSeconds="3">  <!-- pull back from pulse, highlight the fire -->
+            <adjustLight light="1" brightness="0" color="off"  />
+            <adjustLight light="2" brightness="220" color="gabeRedStove"  />
+            <adjustLight light="3" brightness="0" color="off"  />
+            <adjustLight light="4" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="5" brightness="180" color="off"  />
+            <adjustLight light="6" brightness="0" color="off"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="4" rampTimeSeconds="3">  <!-- highlight person -->
+            <adjustLight light="2" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="4" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="6" brightness="191" color="gabehighlightperson"  />
+            <!-- <adjustLight light="5" brightness="178" color="brightRed"  />  -->
+            <!-- <adjustLight light="6" brightness="255" color="genericHighlight"  />  -->
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="12" rampTimeSeconds="3.6">  <!-- sick neighbor -->
+            <adjustLight light="2" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="4" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="6" brightness="191" color="gabehighlightperson"  />
+            <adjustLight light="3" brightness="176" color="gabehighlightnextdoor"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="37" rampTimeSeconds="3">  <!-- baby crying -->
+            <adjustLight light="2" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="4" brightness="180" color="gabeRedStove"  />
+            <adjustLight light="6" brightness="191" color="gabehighlightperson"  />
+            <adjustLight light="3" brightness="176" color="gabehighlightnextdoor"  />
+            <adjustLight light="5" brightness="235" color="gabeluggage"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="58" rampTimeSeconds="6">  <!-- everything slowly red -->
+            <adjustLight light="1" brightness="230" color="gaberoomwashred"  />
+            <adjustLight light="2" brightness="230" color="gaberoomwashred"  />
+            <adjustLight light="3" brightness="230" color="gaberoomwashred"  />
+            <adjustLight light="4" brightness="230" color="gaberoomwashred"  />
+            <adjustLight light="5" brightness="230" color="gaberoomwashred"  />
+            <adjustLight light="6" brightness="230" color="gaberoomwashred"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="79" rampTimeSeconds="6">  <!-- only person red-->
+            <adjustLight light="1" brightness="200" color="off"  />
+            <adjustLight light="2" brightness="200" color="off"  />
+            <adjustLight light="3" brightness="200" color="off"  />
+            <adjustLight light="4" brightness="200" color="off"  />
+            <adjustLight light="5" brightness="200" color="off"  />
+            <adjustLight light="6" brightness="255" color="gaberoomwashred"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="91" rampTimeSeconds="8">  <!-- slowly fade to black -->
+            <adjustLight light="1" brightness="0" color="off"  />
+            <adjustLight light="2" brightness="0" color="off"  />
+            <adjustLight light="3" brightness="0" color="off"  />
+            <adjustLight light="4" brightness="0" color="off"  />
+            <adjustLight light="5" brightness="0" color="off"  />
+            <adjustLight light="6" brightness="0" color="off"  />
+        </adjustmentPoint>
+        <adjustmentPoint timeStamp="101" rampTimeSeconds="1">  <!-- end of show (?) -->
+            <adjustLight light="1" brightness="0" color="off"  />
+            <adjustLight light="2" brightness="0" color="off"  />
+            <adjustLight light="3" brightness="0" color="off"  />
+            <adjustLight light="4" brightness="0" color="off"  />
+            <adjustLight light="5" brightness="0" color="off"  />
+            <adjustLight light="6" brightness="0" color="off"  />
+        </adjustmentPoint>
+    </roomLightSequencerRunOfShow>
+</roomLightColorsAndSequence>

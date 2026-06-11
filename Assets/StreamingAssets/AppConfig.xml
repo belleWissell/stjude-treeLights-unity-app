@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appSettings>
+    <globalSettings>
+        <debugMode>true</debugMode>
+        <display3dRoomRealtimeRender>false</display3dRoomRealtimeRender>
+        <autoLoopShow>true</autoLoopShow>
+        <secondsBetweenLoops>20</secondsBetweenLoops> <!-- after show completes, how long before it starts again -->
+		<useButtonToBeginCapture>true</useButtonToBeginCapture>
+        <enableDocDetect>true</enableDocDetect>
+        <contentFolder>..//RESOURCES//content//</contentFolder>
+        <designFolder>..//RESOURCES//design//</designFolder>
+        <contentJsonFile>na.json</contentJsonFile>
+        <attractTimeout>15</attractTimeout>         <!-- attract timeout in seconds -->
+        <ctaTimeout>8</ctaTimeout>         <!-- attract timeout in seconds -->
+        <ctaDisplayTime>6</ctaDisplayTime>         <!-- attract timeout in seconds -->
+        <recordActivityToLocalFile>false</recordActivityToLocalFile>
+    </globalSettings>
+    <networkSettings>
+        <UDPsignalTransmitIPAddress>224.1.1.1</UDPsignalTransmitIPAddress> <!-- local IP? -->
+        <!-- <UDPsignalTransmitIPAddress>192.168.1.17</UDPsignalTransmitIPAddress>  local IP? -->
+        <UDPsignalTransmitPort>8031</UDPsignalTransmitPort> <!-- 8675, 8676, 8677, 8678 -->
+        <UDPsignalTransmitSignatureName>8x10ControlApp</UDPsignalTransmitSignatureName> <!-- -->
+        <UDPdoConnect>true</UDPdoConnect> <!-- -->
+        <lightDataIPAddress>192.168.1.17</lightDataIPAddress>
+        <lightDataPort>8676</lightDataPort> <!-- 8675, 8676, 8677, 8678 -->
+        <lightDoConnect>true</lightDoConnect> <!-- -->
+        <depthDataIPAddress>224.1.1.1</depthDataIPAddress>
+        <depthDataPort>8031</depthDataPort> <!-- 8675, 8676, 8677, 8678 -->
+        <depthDoConnect>true</depthDoConnect> <!-- -->
+    </networkSettings>
+    <applicationSettings>
+        <thisAppId>8x10ControlApp</thisAppId> <!-- identify source of network transmissions -->
+        <availableApplicationIds> <!-- available sources -->
+            <applicationId>8x10ControlApp</applicationId>
+            <applicationId>8x10AudioApp01</applicationId>
+            <applicationId>8x10AudioApp02</applicationId>
+            <applicationId>8x10AudioApp03</applicationId>
+            <applicationId>8x10DmxSendApp</applicationId>
+            <applicationId>MonumentControlApp</applicationId>
+            <applicationId>MonumentSensorControlApp01</applicationId>
+            <applicationId>MonumentSensorControlApp02</applicationId>
+            <applicationId>MonumentDmxSendApp01</applicationId>
+            <applicationId>MonumentDmxSendApp02</applicationId>
+        </availableApplicationIds>
+    </applicationSettings>
+    <audioSettings> <!-- used only for local software demo -->
+        <MasterAudioLevel>85</MasterAudioLevel> <!-- int betw 0-100 -->
+        <audioFileFolder>..//RESOURCES//audio//</audioFileFolder>
+        <audio>
+            <audioID>runOfShow</audioID>
+            <audioMediaFile>Remembrance_Experience_Demo_1.wav</audioMediaFile> <!-- located in content folder //RESOURCES//audio//UIUX// -->
+            <doLoopAudio>false</doLoopAudio>
+            <audioLoopPoint>0.995</audioLoopPoint>  <!-- percentage of audio to play before looping  float betw 0-1 -->
+        </audio>
+    </audioSettings>
+</appSettings>

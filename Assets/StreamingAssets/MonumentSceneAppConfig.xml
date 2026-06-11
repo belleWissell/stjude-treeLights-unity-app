@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appSettings>
+    <globalSettings>
+        <debugMode>true</debugMode>
+		<useButtonToBeginCapture>true</useButtonToBeginCapture>
+        <enableDocDetect>true</enableDocDetect>
+        <contentFolder>..//RESOURCES//content//</contentFolder>
+        <designFolder>..//RESOURCES//design//</designFolder>
+        <contentJsonFile>na.json</contentJsonFile>
+        <attractTimeout>15</attractTimeout>         <!-- attract timeout in seconds -->
+        <ctaTimeout>8</ctaTimeout>         <!-- attract timeout in seconds -->
+        <ctaDisplayTime>6</ctaDisplayTime>         <!-- attract timeout in seconds -->
+        <recordActivityToLocalFile>false</recordActivityToLocalFile>
+    </globalSettings>
+    <networkSettings>
+        <UDPsignalTransmitIPAddress>224.1.1.1</UDPsignalTransmitIPAddress> <!-- local IP? -->
+        <!-- <UDPsignalTransmitIPAddress>192.168.1.17</UDPsignalTransmitIPAddress>  local IP? -->
+        <UDPsignalTransmitPort>8670</UDPsignalTransmitPort> <!-- 8675, 8676, 8677, 8678 -->
+        <UDPsignalTransmitSignatureName>8x10ControlApp</UDPsignalTransmitSignatureName> <!-- -->
+        <UDPdoConnect>false</UDPdoConnect> <!-- -->
+        <lightDataIPAddress>192.168.1.29</lightDataIPAddress>
+        <lightDataPort>8777</lightDataPort> <!-- 8675, 8676, 8677, 8678 -->
+        <lightDoConnect>true</lightDoConnect> <!-- -->
+        <numberOfPanelsToTrack>48</numberOfPanelsToTrack>
+        <depthDataIPAddress01>224.1.1.1</depthDataIPAddress01>
+        <depthDataPort01>8061</depthDataPort01>
+        <transmissionSignatureName01>MonumentSensorControlApp01</transmissionSignatureName01>
+        <depthDoConnect01>false</depthDoConnect01> <!-- -->
+        <depthDataIPAddress02>224.1.1.1</depthDataIPAddress02>
+        <depthDataPort02>8062</depthDataPort02>
+        <transmissionSignatureName02>MonumentSensorControlApp02</transmissionSignatureName02>
+        <depthDoConnect02>false</depthDoConnect02> <!-- -->
+    </networkSettings>
+    <applicationSettings>
+        <thisAppId>8x10ControlApp</thisAppId> <!-- identify source of network transmissions -->
+        <availableApplicationIds> <!-- available sources -->
+            <applicationId>8x10ControlApp</applicationId>
+            <applicationId>8x10AudioApp01</applicationId>
+            <applicationId>8x10AudioApp02</applicationId>
+            <applicationId>8x10AudioApp03</applicationId>
+            <applicationId>8x10DmxSendApp</applicationId>
+            <applicationId>MonumentControlApp</applicationId>
+            <applicationId>MonumentSensorControlApp01</applicationId>
+            <applicationId>MonumentSensorControlApp02</applicationId>
+            <applicationId>MonumentDmxSendApp01</applicationId>
+            <applicationId>MonumentDmxSendApp02</applicationId>
+        </availableApplicationIds>
+    </applicationSettings>
+    <colorSettings> <!-- all color settings -->
+        <ambientColorR>250</ambientColorR> <!-- int betw 0-255 -->
+        <ambientColorG>180</ambientColorG> <!-- int betw 0-255 -->
+        <ambientColorB>50</ambientColorB> <!-- int betw 0-255 -->
+        <ambientColorW>180</ambientColorW> <!-- int betw 0-255 -->
+        <highlightColorR>254</highlightColorR> <!-- int betw 0-255 -->
+        <highlightColorG>220</highlightColorG> <!-- int betw 0-255 -->
+        <highlightColorB>120</highlightColorB> <!-- int betw 0-255 -->
+        <highlightColorW>220</highlightColorW> <!-- int betw 0-255 -->
+        <maxWaveBrightness>80</maxWaveBrightness> <!-- int betw 0-100-->
+        <minWaveBrightness>1</minWaveBrightness> <!-- int betw 0-100 -->
+        <maxBrightness>90</maxBrightness> <!-- int betw 0-100-->
+        <minBrightness>1</minBrightness> <!-- int betw 0-100 -->
+        <dmxValueON>254</dmxValueON> <!-- int betw 0-255-->
+        <dmxValueOFF>1</dmxValueOFF> <!-- int betw 0-255-->
+    </colorSettings>
+</appSettings>

@@ -1,0 +1,110 @@
+{
+  "debugMode" : true,
+  "showFullScreen" : false,
+  "showMouse" : true,
+  "lightControlSettings" : {
+    "lightTransmitIpAddress" : "UNUSED",
+    "lightTransmitPort" : 8000,
+    "lightTransmitStartAddress" : 300,
+    "numberOfChannelsPerLight" : 4,
+    "doConnectToLightController" : false
+  },
+  "depthDataSettings" : {
+    "ipAddress" : "224.1.1.1",
+    "port" : 8031,
+    "numberOfPanelsToTrack" : 16,
+    "doConnectToDepth" : false
+  },
+  "showControlSettings" : {
+    "ipAddress" : "10.1.5.255",
+    "receivePort" : 22335,
+    "sendPort" : 22334,
+    "doConnectToShowControl" : false,
+    "stringToSend" : "z3:mode?\r\n"
+  },
+  "ambientModeTiming" :	{
+    "sweepTime" : 400,
+    "pingPongHoldOnTime" : 160,
+    "pingPongAdvanceTime" : 120
+  },
+  "lightColorSettings0" :	{
+    "trunk1Hex" : "#74fffd",
+    "trunk2Hex" : "#76daff",
+    "secondary1Hex" : "#ffc181",
+    "secondary2Hex" : "#ff9573",
+    "tertiary1Hex" : "#75eeff",
+    "tertiary2Hex" : "#ffa97c"
+  },
+  "lightColorSettings1" :	{
+    "trunk1Hex" : "#77c7ff",
+    "trunk2Hex" : "#77a4ff",
+    "secondary1Hex" : "#fff58d",
+    "secondary2Hex" : "#ffd386",
+    "tertiary1Hex" : "#76b4ff",
+    "tertiary2Hex" : "#ffea8a"
+  },
+  "lightColorSettings2" :	{
+    "trunk1Hex" : "#7893ff",
+    "trunk2Hex" : "#7872ff",
+    "secondary1Hex" : "#ff8768",
+    "secondary2Hex" : "#ff5e51",
+    "tertiary1Hex" : "#767bff",
+    "tertiary2Hex" : "#ff725e"
+  },
+  "solidTreeColorSettings0_Old" :	{
+    "tree1aHex" : "#EEB38D",
+    "tree1bHex" : "#ECAC8B",
+    "tree2aHex" : "#9ECAD7",
+    "tree2bHex" : "#9CCBD6",
+    "tree3aHex" : "#76DBBA",
+    "tree3bHex" : "#7FD7C0"
+  },
+  "solidTreeColorSettings1_Old" :	{
+    "tree1aHex" : "#F3D392",
+    "tree1bHex" : "#E7D78C",
+    "tree2aHex" : "#9FB4D7",
+    "tree2bHex" : "#9EBED7",
+    "tree3aHex" : "#B3EA73",
+    "tree3bHex" : "#C0E579"
+  },
+  "solidTreeColorSettings0" :	{
+    "tree1aHex" : "#45D7E7",
+    "tree1bHex" : "#9CE2EA",
+    "tree2aHex" : "#52C8B1",
+    "tree2bHex" : "#C6FDE8",
+    "tree3aHex" : "#50D2E3",
+    "tree3bHex" : "#ACDCDE"
+  },
+  "solidTreeColorSettings1" :	{
+    "tree1aHex" : "#5CB365",
+    "tree1bHex" : "#8EBC87",
+    "tree2aHex" : "#66B7D9",
+    "tree2bHex" : "#99CDD8",
+    "tree3aHex" : "#91D46D",
+    "tree3bHex" : "#C4DD82"
+  },
+  "solidTreeColorSettings2" :	{
+    "tree1aHex" : "#77C6FF",
+    "tree1bHex" : "#B6DBEE",
+    "tree2aHex" : "#A2A8FF",
+    "tree2bHex" : "#E3C7FA",
+    "tree3aHex" : "#60D5FF",
+    "tree3bHex" : "#B2E5F6"
+  },
+  "attract" :	{
+    "timeout" : 60,
+    "doTimeout" : false
+  },
+  "window" : {
+    "frameRate": 30,
+    "forcePosition": false,
+    "topMost": false,
+    "runInBackground": true,
+    "fullscreen": true,
+    "offset": 0,
+    "position": {
+      "x": 0,
+      "y": 0
+    }
+  }
+}
