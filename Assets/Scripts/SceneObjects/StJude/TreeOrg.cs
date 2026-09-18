@@ -104,13 +104,13 @@ public class TreeOrg : MonoBehaviour
         int numberOfLightsTemp = 0;
         int numberOfCanopyLights = 0;
 
-        int runningDMXChannelCounter = 0;
+        //int runningDMXChannelCounter = 0;
         
         for (i = 0; i < actualNumberOfTrunks; ++i)
         {
             trunkCtrl[i] = treeTrunks[i].GetComponent<TreePartOrg>();
-            numberOfLightsTemp = trunkCtrl[i].organizeAttachedLights(treeID, i, runningDMXChannelCounter);
-            runningDMXChannelCounter += numberOfLightsTemp * numberOfDMXChannelsPerLight;
+            numberOfLightsTemp = trunkCtrl[i].organizeAttachedLights(treeID, i);
+            //runningDMXChannelCounter += numberOfLightsTemp * numberOfDMXChannelsPerLight;
             logTextCtrl.logText("[TREEORG] Tree #"+treeID+" trunk "+i+" light count "+ numberOfLightsTemp, true);
             numberOfTrunkLights += numberOfLightsTemp;
         }
@@ -118,8 +118,8 @@ public class TreeOrg : MonoBehaviour
         for (i = 0; i < actualNumberOfCanopies; ++i)
         {
             canopyCtrl[i] = treeCanopies[i].GetComponent<TreePartOrg>();
-            numberOfLightsTemp = canopyCtrl[i].organizeAttachedLights(treeID, i, runningDMXChannelCounter);
-            runningDMXChannelCounter += numberOfLightsTemp * numberOfDMXChannelsPerLight;
+            numberOfLightsTemp = canopyCtrl[i].organizeAttachedLights(treeID, i);
+            //runningDMXChannelCounter += numberOfLightsTemp * numberOfDMXChannelsPerLight;
             logTextCtrl.logText("[TREEORG] Tree #"+treeID+" canopy "+i+" light count "+ numberOfLightsTemp, true);
             numberOfCanopyLights += numberOfLightsTemp;
         }

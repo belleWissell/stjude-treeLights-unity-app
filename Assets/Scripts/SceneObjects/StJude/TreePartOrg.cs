@@ -10,6 +10,8 @@ public class TreePartOrg : MonoBehaviour
     private AppConfig.Config config;
 
     public bool isTertiaryCanopy = false;
+    public int treePartUniverse;
+    public int treePartDMXStartChannel;
     
     private int globalFPS = 30; // must match Application.targetFrameRate = 30;
     private int typicalAnimationTime = 40; // this used to 80
@@ -94,7 +96,7 @@ public class TreePartOrg : MonoBehaviour
         }
     }
 
-    public int organizeAttachedLights(int whichTreeID, int whichPartID, int whichStartDMXChannel)
+    public int organizeAttachedLights(int whichTreeID, int whichPartID)
     {
         int valueToReturn = 0;
         // collect all children of this GO (should all be lights)
@@ -109,7 +111,10 @@ public class TreePartOrg : MonoBehaviour
 
         int i;
         actualNumberOfLights = genericLightPart.Count;
-        int runningDMXChannelCounter = whichStartDMXChannel;
+        int runningDMXChannelCounter = treePartDMXStartChannel - 1;  // DMX universe in supplied drawing starts at 1
+        int runningDMXUniverse = treePartUniverse - 1; // DMX universe in supplied drawing is 1 and 2 (we need 0 and 1 for code)
+        
+        
         for (i = 0; i < actualNumberOfLights; ++i)
         {
             lights[i] = genericLightPart[i];
@@ -117,12 +122,12 @@ public class TreePartOrg : MonoBehaviour
             if (lightCtrl[i].isTrunk)
             {
                 lights[i].name = "T" + whichTreeID + "_tk_" + whichPartID + "_lt_" + i;
-                lightCtrl[i].DMXUniverse = whichTreeID;
+                lightCtrl[i].DMXUniverse = runningDMXUniverse;
             }
             else if (lightCtrl[i].isCanopy)
             {
                 lights[i].name = "T" + whichTreeID + "_ca_" + whichPartID + "_lt_" + i;
-                lightCtrl[i].DMXUniverse = whichTreeID;
+                lightCtrl[i].DMXUniverse = runningDMXUniverse;
             }
             /*
             else if (lightCtrl[i].isGlobe)
