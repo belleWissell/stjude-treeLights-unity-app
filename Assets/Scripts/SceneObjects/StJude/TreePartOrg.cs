@@ -9,7 +9,7 @@ public class TreePartOrg : MonoBehaviour
     private AppConfig appConfig;
     private AppConfig.Config config;
 
-    public bool isTertiaryCanopy = false;
+    //public bool isTertiaryCanopy = false;
     public int treePartUniverse;
     public int treePartDMXStartChannel;
     
@@ -42,7 +42,7 @@ public class TreePartOrg : MonoBehaviour
         
     }
 
-    public void adjustColorsTo(Color whichColor0, Color whichColor1) // will distribute range of colors between these two values
+    public void adjustColorsToAndEvenlyGradient(Color whichColor0, Color whichColor1) // will distribute range of colors between these two values
     {
         
         Vector3 startColor = new Vector3(whichColor0.r, whichColor0.g, whichColor0.b);
@@ -63,6 +63,30 @@ public class TreePartOrg : MonoBehaviour
             lightCtrl[i].animatColorValueTo(newColor, 75);
         }
     }
+
+    public void adjustColorsToAndDistributeColorBetweenPoints(Color whichColor0, Color whichColor1, Vector3 whichStartPoint, Vector3 whichEndPoint)
+    {
+        Vector3 startColor = new Vector3(whichColor0.r, whichColor0.g, whichColor0.b);
+        Vector3 endColor = new Vector3(whichColor1.r, whichColor1.g, whichColor1.b);
+        float deltaR = endColor.x - startColor.x;
+        float deltaG = endColor.y - startColor.y;
+        float deltaB = endColor.z - startColor.z;
+        Vector3 newColor;
+        float percentage = 0;
+        
+        for (int i = 0; i < actualNumberOfLights; ++i)
+        {
+            percentage = ClosestPercentagePointOnInfiniteLine(whichStartPoint, whichEndPoint, lightCtrl[i].screenPosition);
+            newColor.x = startColor.x + deltaR * percentage;
+            newColor.y = startColor.y + deltaG * percentage;
+            newColor.z = startColor.z + deltaB * percentage;
+            
+            lightCtrl[i].animateHighlightValueTo(0, 15);
+            lightCtrl[i].animatColorValueTo(newColor, 75);
+        }
+    }
+    
+    
     
     public void checkForColorChanges()
     {
@@ -129,6 +153,8 @@ public class TreePartOrg : MonoBehaviour
                 lights[i].name = "T" + whichTreeID + "_ca_" + whichPartID + "_lt_" + i;
                 lightCtrl[i].DMXUniverse = runningDMXUniverse;
             }
+            lightCtrl[i].screenPosition = lights[i].transform.position;
+
             /*
             else if (lightCtrl[i].isGlobe)
             {
@@ -154,5 +180,38 @@ public class TreePartOrg : MonoBehaviour
             lightCtrl[i].animateHighlightValueTo(0, 15);
             lightCtrl[i].animatColorValueTo(offColor, 25);
         }
+    }
+    
+    private Vector3 ClosestPointOnInfiniteLine(Vector3 lineStart, Vector3 lineEnd, Vector3 targetPoint)
+    {
+        Vector3 lineDirection = lineEnd - lineStart;
+        //float lineLengthSquared = lineDirection.LengthSquared();
+        float lineLengthSquared = lineDirection.sqrMagnitude;
+
+        // Handle the edge case where lineStart and lineEnd are the exact same point
+        if (lineLengthSquared == 0f) return lineStart;
+
+        // Project the target point onto the line vector to find the 't' factor
+        float t = Vector3.Dot(targetPoint - lineStart, lineDirection) / lineLengthSquared;
+
+        // Return the projected point along the infinite line
+        return lineStart + t * lineDirection;
+    }
+    private float ClosestPercentagePointOnInfiniteLine(Vector3 lineStart, Vector3 lineEnd, Vector3 targetPoint)
+    {
+        Vector3 lineDirection = lineEnd - lineStart;
+        //float lineLengthSquared = lineDirection.LengthSquared();
+        float lineLengthSquared = lineDirection.sqrMagnitude;
+
+        // Handle the edge case where lineStart and lineEnd are the exact same point
+        if (lineLengthSquared == 0f) return 0f;
+
+        // Project the target point onto the line vector to find the 't' factor
+        float t = Vector3.Dot(targetPoint - lineStart, lineDirection) / lineLengthSquared;
+
+        return t;
+        
+        // Return the projected point along the infinite line
+        //return lineStart + t * lineDirection;
     }
 }

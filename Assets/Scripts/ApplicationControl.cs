@@ -52,11 +52,6 @@ namespace AAMVC.Unity
         
         private bool MouseIsVisible = true;
         
-        //public int currentApplicationState = -1;
-
-        //public GameObject lightControlObj;
-        //private MonumentLightCtrl lightControl;
-        
         public GameObject lightControlObj;
         private Z_LightCtrl lightControl;
 
@@ -92,26 +87,16 @@ namespace AAMVC.Unity
         public GameObject loadingMessage;
 
         private static int numberOfArtNetUniverses = 4;
-        //public GameObject[] artnetControlObj = new GameObject[numberOfArtNetUniverses];
-        //private ArtnetCtrl[] artnetCtrl = new ArtnetCtrl[numberOfArtNetUniverses];
         public GameObject artnetControlObj;
         private ArtnetCtrl artnetCtrl;
-        
-        //public GameObject artnetFeedbackObj;
-        //private ArtnetDataDisplayCtrl artnetDataDisplayCtrl;
 
         public TextMeshPro modeFeedbackText;
 
-        /*
-        public enum AnimalState
-        {
-            hidden,
-            hinting,
-            revealing
-        }*/
-
         public ApplicationState currentApplicationState;
         private ApplicationState prevApplicationState;
+
+        private int currentTreeColorPresetIndex = -1;
+        
         public enum ApplicationState
         {
             loading,
@@ -350,25 +335,6 @@ namespace AAMVC.Unity
 
         }
 
-
-        /*
-        public void setApplicationStateTo(int whichNewState)
-        {
-            
-            /* /// 0 = attract
-            ///     cycle through available animals
-            ///     no sound
-            /// 1 = someone is present
-            ///     leave currently (in)active animal up
-            ///     ramp up sound
-            ///     listen for 
-            /// 2 = someone activated a region
-            ///     transition to active animal sequence
-            ///  */
-            /*
-            currentApplicationState = whichNewState;
-            textLog.logText("[APPCTRL] state changed to "+currentApplicationState, getConfigFromXML.debugMode);
-        } */
         
         private void resizeAllGameElements()
         {
@@ -440,15 +406,6 @@ namespace AAMVC.Unity
             }
         } */
 
-        public void updateAllTreeColorsTo(int whichColorChannel, Color whichColor0, Color whichColor1)
-        {
-            lightControl.updateAllTreeColorsTo(whichColorChannel, whichColor0, whichColor1);
-        }
-        
-        public void updateIndividualTreeColorsTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
-        {
-            lightControl.updateSpecificTreeColorsTo(whichTreeIndex, whichColor0, whichColor1);
-        }
 
         
         public void toggleOutputFromUI(int whichOutput)
@@ -560,67 +517,7 @@ namespace AAMVC.Unity
             
             showControlCtrl.retreiveCurrentModeFromShowControl();
         }*/
-        
-        public void testLightTogglesFromKeyboard()
-        {
-            if (currentApplicationState != ApplicationState.testing)
-                currentApplicationState = ApplicationState.testing;
-            else
-                lightControl.toggleAllLightboxesOrLightsOn();
-        }
-        
-        public void changeStateFromKeyboardTo(ApplicationState whichNewState) // allOff, allon, reactToPresence, testing  // letters 1, 2, 3, 4
-        {
-            
-            currentApplicationState = whichNewState;
-            
-        }
 
-        public void switchColorModeFromKeyboardTo(TreeColorMode whichNewColorMode)
-        {
-            currentTreeColorMode = whichNewColorMode;
-            
-            treeColorEffectCtrl.adjustColorsTo(whichNewColorMode);
-
-            switch (whichNewColorMode)
-            {
-                case TreeColorMode.newDay:
-                    modeFeedbackText.text = "MODE: new day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.midDay:
-                    modeFeedbackText.text = "MODE: mid day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.lateDay:
-                    modeFeedbackText.text = "MODE: late day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesNewDay:
-                    modeFeedbackText.text = "MODE: solids new day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesPeakDay:
-                    modeFeedbackText.text = "MODE: solids peak day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesLateDay:
-                    modeFeedbackText.text = "MODE: solids Late day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-            }
-
-        }
-
-        public void startSparkleWaveFromKeyboard()
-        {
-            lightControl.startWaveGlobeSparkle();
-        }
-
-        public void adjustApplicationStateFromShowControl(ApplicationState whichNewState)
-        {
-            currentApplicationState = whichNewState;
-        }
         
         /*
         public void updateFromSensors(int whichRegion, int whichCode)
@@ -972,7 +869,114 @@ namespace AAMVC.Unity
         
         #region control object interrops
         
+        
+        public void updateAllTreeColorsTo(int whichColorChannel, Color whichColor0, Color whichColor1)
+        {
+            lightControl.updateAllTreeColorsTo(whichColorChannel, whichColor0, whichColor1);
+        }
+        
+        public void updateIndividualTreeColorsTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
+        {
+            lightControl.updateSpecificTreeColorsTo(whichTreeIndex, whichColor0, whichColor1);
+        }
 
+        public void updateSingleTreeTrunkColorsTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
+        {
+            lightControl.updateTreeTrunkColorTo(whichTreeIndex, whichColor0, whichColor1);
+        }
+
+        public void updateSingleTreeCanopyColorsTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
+        {
+            lightControl.updateTreeCanopyColorTo(whichTreeIndex, whichColor0, whichColor1);
+        }
+
+        public void updateSingleTreeGlobeColorTo(int whichTreeIndex, Color whichColor0)
+        {
+            lightControl.updateTreeGlobeColorTo(whichTreeIndex, whichColor0);
+        }
+        
+        public void testLightTogglesFromKeyboard()
+        {
+            if (currentApplicationState != ApplicationState.testing)
+                currentApplicationState = ApplicationState.testing;
+            else
+                lightControl.toggleAllLightboxesOrLightsOn();
+        }
+        
+        public void changeStateFromKeyboardTo(ApplicationState whichNewState) // allOff, allon, reactToPresence, testing  // letters 1, 2, 3, 4
+        {
+            
+            currentApplicationState = whichNewState;
+            
+        }
+
+        public void adjustCurrentLightPresetFromKeyboard(bool doGoForward)
+        {
+            if (doGoForward)
+                currentTreeColorPresetIndex++;
+            else
+                currentTreeColorPresetIndex--;
+            
+            if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
+                currentTreeColorPresetIndex = 0;
+            else if (currentTreeColorPresetIndex < 0)
+                currentTreeColorPresetIndex = config.treeColorPresets.treeColorPreset.Length - 1;
+
+            
+            treeColorEffectCtrl.changeColorSchemeTo(currentTreeColorPresetIndex);
+            
+            modeFeedbackText.text = "PRESET: # "+ currentTreeColorPresetIndex +"\nTHEME: " + config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme;
+            modeFeedbackText.text += "\nNAME: "+ config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].name;
+        }
+
+        public void updateModeFeedbackToCustom()
+        {
+            modeFeedbackText.text = "PRESET: none (CUSTOM)";
+        }
+        
+        public void switchColorModeFromKeyboardTo(TreeColorMode whichNewColorMode)
+        {
+            currentTreeColorMode = whichNewColorMode;
+            treeColorEffectCtrl.adjustColorsTo(whichNewColorMode);
+
+            switch (whichNewColorMode)
+            {
+                case TreeColorMode.newDay:
+                    modeFeedbackText.text = "MODE: new day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+                case TreeColorMode.midDay:
+                    modeFeedbackText.text = "MODE: mid day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+                case TreeColorMode.lateDay:
+                    modeFeedbackText.text = "MODE: late day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+                case TreeColorMode.solidTreesNewDay:
+                    modeFeedbackText.text = "MODE: solids new day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+                case TreeColorMode.solidTreesPeakDay:
+                    modeFeedbackText.text = "MODE: solids peak day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+                case TreeColorMode.solidTreesLateDay:
+                    modeFeedbackText.text = "MODE: solids Late day";
+                    currentApplicationState = ApplicationState.ambientAnimation;
+                    break;
+            }
+        }
+
+        public void startSparkleWaveFromKeyboard()
+        {
+            lightControl.startWaveGlobeSparkle();
+        }
+
+        public void adjustApplicationStateFromShowControl(ApplicationState whichNewState)
+        {
+            currentApplicationState = whichNewState;
+        }
 
         
         #endregion control object interrops

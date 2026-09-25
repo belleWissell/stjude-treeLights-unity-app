@@ -29,6 +29,9 @@ public class Z_LightCtrl : MonoBehaviour
     public GameObject globeObj;
     private TreeGlobeCtrl treeGlobeCtrl;
     
+    //public GameObject relayLightCollectionObj;
+    //private TreePartOrg relayCtrl;
+
     private float highValue = 98f;
     private float lowValue = 0f;
 
@@ -159,12 +162,14 @@ public class Z_LightCtrl : MonoBehaviour
             }*/
         //}
 
+        /*
         if (ambientAnimationIsActive)
         {
             ambientAnimationTimer += 1;
             checkAmbientMode();
         }
-
+        */
+        
         if (waitAndResumeAmbient)
         {
             waitAndResumeAmbientTimer += 1;
@@ -191,10 +196,27 @@ public class Z_LightCtrl : MonoBehaviour
             if (i == whichTreeIndex)
             {
                 treeOrg[i].updateColorsTo(0, whichColor0, whichColor0); // trunk
-                treeOrg[i].updateColorsTo(1, whichColor1, whichColor1); // secondary
-                treeOrg[i].updateColorsTo(2, whichColor1, whichColor1); // tertiary
+                treeOrg[i].updateColorsTo(1, whichColor1, whichColor1); // canopy
+                treeOrg[i].updateColorsTo(2, whichColor1, whichColor1); // globe
             }
         }
+    }
+
+    public void updateTreeTrunkColorTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
+    {
+        treeOrg[whichTreeIndex].updateColorsTo(0, whichColor0, whichColor1); // trunk
+    }
+
+    public void updateTreeCanopyColorTo(int whichTreeIndex, Color whichColor0, Color whichColor1)
+    {
+        treeOrg[whichTreeIndex].updateColorsTo(1, whichColor0, whichColor1); // canopy
+    }
+
+    public void updateTreeGlobeColorTo(int whichTreeIndex, Color whichColor0)
+    {
+        //treeOrg[whichTreeIndex].updateColorsTo(2, whichColor0, whichColor0); // globe
+        
+        treeGlobeCtrl.updateColorsTo(whichTreeIndex, whichColor0);
     }
 
     public void startAmbientGlobeSparkle()
@@ -519,38 +541,9 @@ public class Z_LightCtrl : MonoBehaviour
         {
             treeOrg[i].fadeOutAllLights();
         }
-
-        /*
-        for (int i = 0; i < actualNumberOfLights; ++i)
-        {
-            /*
-            if (z3SingleLightCtrl[i].isAmazonLogo) // except for logo!
-            {
-                z3SingleLightCtrl[i].animateAmbientValueTo(highValue, typicalAnimationTime);
-            }
-            else
-            {
-                if (appControl.currentApplicationState == ApplicationControl.ApplicationState.reactToPresence) // skip over any active regions?
-                {
-                    if (!isLightInTheVacinityOfAnActiveRegion(i)) // make sure light is not in an active region before shutting it down
-                    {
-                        if (!z3SingleLightCtrl[i].reactingOff)
-                        {
-                            z3SingleLightCtrl[i].reactingOff = true;
-                            z3SingleLightCtrl[i].reactingOn = false;
-                            z3SingleLightCtrl[i].animateAmbientValueTo(lowValue, typicalAnimationTime);
-                            //z3SingleLightCtrl[i].animateHighlightValueTo(0, typicalAnimationTime);
-                        }
-                    }
-                }
-                else
-                {
-                    z3SingleLightCtrl[i].reactingOff = true;
-                    z3SingleLightCtrl[i].reactingOn = false;
-                    z3SingleLightCtrl[i].animateAmbientValueTo(lowValue, typicalAnimationTime);
-                }
-            //}
-        }*/
+        
+        treeGlobeCtrl.fadeOutAllLights();
+        
     }
 
     private void fadeInAllLights()
@@ -562,6 +555,8 @@ public class Z_LightCtrl : MonoBehaviour
         {
             treeOrg[i].fadeInAllLights();
         }
+        
+        treeGlobeCtrl.fadeInAllLights();
         /*
         for (int i = 0; i < actualNumberOfLights; ++i)
         {
@@ -574,30 +569,17 @@ public class Z_LightCtrl : MonoBehaviour
     {
         if (!initComplete)
             return;
-
     }
     
     private void showAllLightStripTest()
     {
         if (!initComplete)
             return;
-
     }
 
     
     #region initialization
     
-    
-    /*
-    public void assignActualNumberOfRegions(int whichNumberOfRegions)
-    {
-        actualNumberOfRegions = whichNumberOfRegions;
-    }
-
-    public void assignRegionPositionFromProxFeedback(int whichRegion, float whichPosition)
-    {
-        regionPosition[whichRegion] = whichPosition;
-    }*/
 
     public void initLights()
     {
@@ -605,8 +587,6 @@ public class Z_LightCtrl : MonoBehaviour
         sortLightObjects();
         initComplete = true;
         fadeOutAllLights();
-        //illuminateLogo();
-
     }
     
     private void sortLightObjects()
@@ -621,66 +601,10 @@ public class Z_LightCtrl : MonoBehaviour
         treeGlobeCtrl = globeObj.GetComponent<TreeGlobeCtrl>();
         totalLights = treeGlobeCtrl.organizeAttachedLights();
         logTextCtrl.logText("[LightCtrl] total globe lights = "+ totalLights, true);
-        /*
-        List<GameObject> genericLightObj = new List<GameObject>();
-
-        Transform parent_t = this.transform;
-
-        foreach (Transform child_t in parent_t)
-        {
-            if (child_t != null)
-                genericLightObj.Add(child_t.gameObject);
-        }*/
-
-        /*
-        actualNumberOfLights = genericLightObj.Count;
-        if (actualNumberOfLights > maxNumberOfLights)
-            actualNumberOfLights = maxNumberOfLights;
-
-
-        string objName;
-        int i;
-
-        for (i = 0; i < actualNumberOfLights; ++i)
-        {
-            lights[i] = genericLightObj[i];
-            z3SingleLightCtrl[i] = lights[i].GetComponent<Z_InidivdualLightCtrl>();
-
-            z3SingleLightCtrl[i].screenPosition = lights[i].transform.position;
-
-            if (z3SingleLightCtrl[i].screenPosition.x < minXPosn)
-                minXPosn = z3SingleLightCtrl[i].screenPosition.x;
-            if (z3SingleLightCtrl[i].screenPosition.y < minYPosn)
-                minYPosn = z3SingleLightCtrl[i].screenPosition.y;
-            if (z3SingleLightCtrl[i].screenPosition.x > maxXPosn)
-                maxXPosn = z3SingleLightCtrl[i].screenPosition.x;
-            if (z3SingleLightCtrl[i].screenPosition.y > maxYPosn)
-                maxYPosn = z3SingleLightCtrl[i].screenPosition.y;
-
-
-            if (z3SingleLightCtrl[i].isCanopy)
-            {
-                objName = "Canopy" + i;
-                z3SingleLightCtrl[i].init(i, objName);
-                lights[i].name = objName;
-            }
-            else
-            {
-                if (z3SingleLightCtrl[i].isTrunk)
-                {
-                    objName = "Trunk" + i;
-                    z3SingleLightCtrl[i].init(i, objName);
-                    lights[i].name = objName;
-                }
-                else
-                {
-                    objName = "Globe" + i;
-                    z3SingleLightCtrl[i].init(i, objName);
-                    lights[i].name = objName;
-                }
-            }
-        }*/
+        
+        
+        
     }
-    
+
     #endregion initialization
 }

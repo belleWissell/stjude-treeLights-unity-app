@@ -10,23 +10,25 @@ public class Z_InidivdualLightCtrl : MonoBehaviour
     public int treeId = 0;
     public bool isTrunk = false;
     public bool isCanopy = false;
-    public int canopyId = 0;
+    //public int canopyId = 0;
     public bool isGlobe = false;
     public int DMXStartChannel;
     public int DMXUniverse;
     private int myID;
     public TextMeshPro valueFeedback;
 
-    public int partnerLightChannel01 = 0; 
-    public int partnerLightChannel02 = 0; // some messages have two nearby lights
+    //public int partnerLightChannel01 = 0; 
+    //public int partnerLightChannel02 = 0; // some messages have two nearby lights
     
     //private int value_i = 0;
     //public float ambientBrightness = 0;  // between 0 and 100
     public float highlightBrightness = 0;  // between 0 and 100
     public float targetHighlightBrightness = 0; 
     
-    public Vector3 targetColor = Vector3.zero; // between 0 and 255
+    //public Vector3 targetColor = Vector3.zero; // between 0 and 255
     public Vector3 currentColor = Vector3.zero; // between 0 and 255
+    
+    public Vector3 restColor = Vector3.zero; // this is used for globe lights which sparkle and return to default color other than (off)
     
     //public GameObject quadAmbient;
     //public GameObject quadHighlight;
@@ -45,11 +47,11 @@ public class Z_InidivdualLightCtrl : MonoBehaviour
     private int waitAndTurnOffHighlightTimer = 0;
     private int waitAndTurnOffHighlightTimerLimit = 0;
 
-    public bool sweepingOn = false;
-    public bool sweepingOff = false;
+    //public bool sweepingOn = false;
+    //public bool sweepingOff = false;
     
-    public bool reactingOn = false;
-    public bool reactingOff = false;
+    //public bool reactingOn = false;
+    //public bool reactingOff = false;
 
     //public TextMeshPro[] text = new TextMeshPro[maxNumberOfBars];
     [HideInInspector]
@@ -180,11 +182,16 @@ public class Z_InidivdualLightCtrl : MonoBehaviour
         animatColorValueTo(new Vector3(1, 1, 1), whichRampTime, whichDelayTime);
     }
 
+    public void adjustGlobeDefaultColorTo(Vector3 whichColor) // incoming whichColor needs to be values betw 0-255
+    {
+        animatColorValueTo(whichColor, 60);
+        restColor = whichColor; 
+    }
 
     private void removeGlobeAmbientSparkle()
     {
         Vector3 turnOff = new Vector3(0, 0, 0);
-        animatColorValueTo(turnOff, 45);
+        animatColorValueTo(restColor, 45);
     }
 
     public void animateHighlightValueAndHoldFor(float whichNewValue, int whichRampTime, int whichHoldTime)

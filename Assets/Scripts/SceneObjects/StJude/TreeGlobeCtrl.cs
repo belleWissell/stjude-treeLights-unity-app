@@ -8,11 +8,24 @@ public class TreeGlobeCtrl : MonoBehaviour
     private AAMVC.Unity.ApplicationControl appControl;
 
     private bool initComplete = false;
-    private static int numberOfTrees = 3;
-    public GameObject[] treeGlobeObjects = new GameObject[numberOfTrees];
     
-    public static int maxNumberOfGlobeLights = 250;
-    private int actualNumberOfLights = 0;
+    private static int maxNumberOfGlobeStringsPerTree = 6;
+    [Header("Globe Lights:")]
+
+    public int actualNumberOfGlobeStrings0 = 0;
+    public GameObject[] tree0GlobeStrings= new GameObject[maxNumberOfGlobeStringsPerTree];
+    public int actualNumberOfGlobeStrings1= 0;
+    public GameObject[] tree1GlobeStrings= new GameObject[maxNumberOfGlobeStringsPerTree];
+    public int actualNumberOfGlobeStrings2 = 0;
+    public GameObject[] tree2GlobeStrings= new GameObject[maxNumberOfGlobeStringsPerTree];
+    
+    [Header("Relays:")]
+
+    public GameObject relayGlobeString;
+    
+    
+    private static int maxNumberOfGlobeLights = 250;
+    private int actualNumberOfGlobeLights = 0;
     private GameObject[] lights = new GameObject[maxNumberOfGlobeLights];
     private Z_InidivdualLightCtrl[] lightCtrl = new Z_InidivdualLightCtrl[maxNumberOfGlobeLights];
 
@@ -22,6 +35,9 @@ public class TreeGlobeCtrl : MonoBehaviour
     [Header("Ambient Sparkle Settings:")] 
     private bool ambientSparkleAnimationIsActive = false;
     private int ambientSparkleCounter = 0;
+    
+    [Header("Animation variables:")]
+
     public int ambientSparkleFrequency = 8;
     public int numberOfAmbientSparklesPerPass = 3;
     public int sparkleRampUp = 8;
@@ -61,13 +77,41 @@ public class TreeGlobeCtrl : MonoBehaviour
         }
     }
 
-    private void turnOffAllLights()
+    public void fadeOutAllLights()
     {
         Vector3 lightOff = new Vector3(0, 0, 0);
+        Vector3 lightOn = new Vector3(1, 1, 1);
+        //ambientSparkleAnimationIsActive = false;
         
-        for (int i = 0; i < actualNumberOfLights; ++i)
+        for (int i = 0; i < actualNumberOfGlobeLights; ++i)
         {
-            lightCtrl[i].animatColorValueTo(lightOff, 10);
+            if (i==actualNumberOfGlobeLights-1)
+                lightCtrl[i].animatColorValueTo(lightOn, 10);
+            else
+                lightCtrl[i].animatColorValueTo(lightOff, 10);
+        }
+    }
+
+    public void fadeInAllLights()
+    {
+        Vector3 lightOn = new Vector3(1, 1, 1);
+
+        for (int i = 0; i < actualNumberOfGlobeLights; ++i)
+        {
+            lightCtrl[i].animatColorValueTo(lightOn, 10);
+        }
+
+    }
+
+    public void updateColorsTo(int whichTreeIndex, Color whichColor0)
+    {
+        
+        Vector3 newColor = new Vector3(whichColor0.r, whichColor0.g, whichColor0.b); // converts from color to vector3
+        
+        for (int i = 0; i < actualNumberOfGlobeLights; ++i)
+        {
+            if (lightCtrl[i].treeId == whichTreeIndex)
+                lightCtrl[i].adjustGlobeDefaultColorTo(newColor);
         }
     }
     
@@ -102,7 +146,7 @@ public class TreeGlobeCtrl : MonoBehaviour
             // select n random lights and instruct them to sparkle
             for (i = 0; i < numberOfAmbientSparklesPerPass; ++i)
             {
-                pickRandomLight = UnityEngine.Random.Range(0, actualNumberOfLights);
+                pickRandomLight = UnityEngine.Random.Range(0, actualNumberOfGlobeLights-1);
                 lightCtrl[pickRandomLight].startAmbientGlobeSparkle(sparkleRampUp, sparkleHold);
             }
         }
@@ -110,7 +154,7 @@ public class TreeGlobeCtrl : MonoBehaviour
 
     private void resetAllLightSparkleWaves()
     {
-        for (int i = 0; i < actualNumberOfLights; ++i)
+        for (int i = 0; i < actualNumberOfGlobeLights-1; ++i)
         {
 
             lightCtrl[i].sparkleWaveAlreadyHit = false;
@@ -124,7 +168,7 @@ public class TreeGlobeCtrl : MonoBehaviour
         int randomDelay;
         int randomHold;
         
-        for (int i = 0; i < actualNumberOfLights; ++i)
+        for (int i = 0; i < actualNumberOfGlobeLights-1; ++i)
         {
             if (lightCtrl[i].globeRangeFromWall < sparkleRadius)
             {
@@ -146,7 +190,7 @@ public class TreeGlobeCtrl : MonoBehaviour
     
     public void checkForColorChanges()
     {
-        for (int i = 0; i < actualNumberOfLights; ++i)
+        for (int i = 0; i < actualNumberOfGlobeLights; ++i)
         {
             byte newValue = 0;
             if (lightCtrl[i].isDirty())
@@ -166,13 +210,6 @@ public class TreeGlobeCtrl : MonoBehaviour
                 //newValue = (byte)Math.Floor((lightCtrl[i].highlightBrightness / 100f) * 255);
                 //appControl.updateIndividualArtNetValue(lightCtrl[i].DMXUniverse, lightCtrl[i].DMXStartChannel + 4, newValue);
             }
-
-            /*
-            if (z3SingleLightCtrl[i].isAmazonLogo) // override all amazon logo lights to always be on full value:
-            {
-                newValue = (byte)Math.Floor((highValue/100f) * 255);
-                appControl.updateIndividualArtNetValue(z3SingleLightCtrl[i].DMXChannel, newValue);
-            }*/
         }
     }
     
@@ -181,58 +218,170 @@ public class TreeGlobeCtrl : MonoBehaviour
     public int organizeAttachedLights()
     {
         int valueToReturn = 0;
-        int numberOfGlobeLightsInTree = 0;
+        //int numberOfGlobeLightsInTree = 0;
+        int numberOfGlobeLightsInLightString = 0;
         int i, j;
         // collect all children of this GO (should all be lights)
         int runningDMXChannelCounter = 0;
+        int whichDMXUniverse;
 
         int runningLightControllerCounter = 0;
         float rangeFromWallTarget;
-        
-        for (i = 0; i < numberOfTrees; ++i) // go through each of the trees
+
+
+        for (i = 0; i < actualNumberOfGlobeStrings0; ++i)
         {
-            List<GameObject> genericLightPart = new List<GameObject>();
+            List<GameObject> genericLightPart0 = new List<GameObject>();
+            Transform parent_LightString = tree0GlobeStrings[i].transform;
+            TreePartOrg treePartOrg0 = tree0GlobeStrings[i].GetComponent<TreePartOrg>();
 
-            Transform parent_t = treeGlobeObjects[i].transform;
-
-            foreach (Transform child_t in parent_t)
+            foreach (Transform child_t in parent_LightString)
             {
                 if (child_t != null)
-                    genericLightPart.Add(child_t.gameObject);
+                    genericLightPart0.Add(child_t.gameObject);
             }
 
-            
-            numberOfGlobeLightsInTree = genericLightPart.Count;
-            actualNumberOfLights += numberOfGlobeLightsInTree;
-            
-            for (j = 0; j < numberOfGlobeLightsInTree; ++j)
+            numberOfGlobeLightsInLightString = genericLightPart0.Count;
+            actualNumberOfGlobeLights += numberOfGlobeLightsInLightString;
+            runningDMXChannelCounter = treePartOrg0.treePartDMXStartChannel - 1;
+            whichDMXUniverse = treePartOrg0.treePartUniverse - 1;
+            for (j = 0; j < numberOfGlobeLightsInLightString; ++j)
             {
-                lights[runningLightControllerCounter] = genericLightPart[j];
+                lights[runningLightControllerCounter] = genericLightPart0[j];
                 lightCtrl[runningLightControllerCounter] = lights[runningLightControllerCounter].GetComponent<Z_InidivdualLightCtrl>();
                 if (lightCtrl[runningLightControllerCounter].isGlobe)
                 {
-                    lights[runningLightControllerCounter].name = "T" + i + "_gb_lt_" + j;
-                    lightCtrl[runningLightControllerCounter].DMXUniverse = 4;
+                    lightCtrl[runningLightControllerCounter].treeId = 0;
+                    lights[runningLightControllerCounter].name = "T0_gb_lt_" + j;
+                    lightCtrl[runningLightControllerCounter].DMXUniverse = whichDMXUniverse;
                     lightCtrl[runningLightControllerCounter].screenPosition = lights[runningLightControllerCounter].transform.position;
                     rangeFromWallTarget = Vector3.Distance(lights[runningLightControllerCounter].transform.position, globeWaveCenterPoint.transform.position);
                     lightCtrl[runningLightControllerCounter].globeRangeFromWall = rangeFromWallTarget;
                     lightCtrl[runningLightControllerCounter].DMXStartChannel = runningDMXChannelCounter;
-                
+
                     runningLightControllerCounter += 1;
                     runningDMXChannelCounter += numberOfDMXChannelsPerLight;
                 }
-
             }
         }
-        
-        if (actualNumberOfLights > maxNumberOfGlobeLights)
-            actualNumberOfLights = maxNumberOfGlobeLights;
-        
+
+
+        for (i = 0; i < actualNumberOfGlobeStrings1; ++i)
+        {
+            List<GameObject> genericLightPart1 = new List<GameObject>();
+            Transform parent_LightString = tree1GlobeStrings[i].transform;
+            TreePartOrg treePartOrg1 = tree1GlobeStrings[i].GetComponent<TreePartOrg>();
+
+            foreach (Transform child_t in parent_LightString)
+            {
+                if (child_t != null)
+                    genericLightPart1.Add(child_t.gameObject);
+            }
+
+            numberOfGlobeLightsInLightString = genericLightPart1.Count;
+            actualNumberOfGlobeLights += numberOfGlobeLightsInLightString;
+            runningDMXChannelCounter = treePartOrg1.treePartDMXStartChannel - 1;
+            whichDMXUniverse = treePartOrg1.treePartUniverse - 1;
+
+            for (j = 0; j < numberOfGlobeLightsInLightString; ++j)
+            {
+                lights[runningLightControllerCounter] = genericLightPart1[j];
+                lightCtrl[runningLightControllerCounter] = lights[runningLightControllerCounter].GetComponent<Z_InidivdualLightCtrl>();
+                if (lightCtrl[runningLightControllerCounter].isGlobe)
+                {
+                    lightCtrl[runningLightControllerCounter].treeId = 1;
+                    lights[runningLightControllerCounter].name = "T1_gb_lt_" + j;
+                    lightCtrl[runningLightControllerCounter].DMXUniverse = whichDMXUniverse;
+                    lightCtrl[runningLightControllerCounter].screenPosition = lights[runningLightControllerCounter].transform.position;
+                    rangeFromWallTarget = Vector3.Distance(lights[runningLightControllerCounter].transform.position, globeWaveCenterPoint.transform.position);
+                    lightCtrl[runningLightControllerCounter].globeRangeFromWall = rangeFromWallTarget;
+                    lightCtrl[runningLightControllerCounter].DMXStartChannel = runningDMXChannelCounter;
+
+                    runningLightControllerCounter += 1;
+                    runningDMXChannelCounter += numberOfDMXChannelsPerLight;
+                }
+            }
+        }
+
+
+        for (i = 0; i < actualNumberOfGlobeStrings2; ++i)
+        {
+            List<GameObject> genericLightPart2 = new List<GameObject>();
+            Transform parent_LightString = tree2GlobeStrings[i].transform;
+            TreePartOrg treePartOrg2 = tree2GlobeStrings[i].GetComponent<TreePartOrg>();
+
+            foreach (Transform child_t in parent_LightString)
+            {
+                if (child_t != null)
+                    genericLightPart2.Add(child_t.gameObject);
+            }
+
+            numberOfGlobeLightsInLightString = genericLightPart2.Count;
+            actualNumberOfGlobeLights += numberOfGlobeLightsInLightString;
+            runningDMXChannelCounter = treePartOrg2.treePartDMXStartChannel - 1;
+            whichDMXUniverse = treePartOrg2.treePartUniverse - 1;
+
+            for (j = 0; j < numberOfGlobeLightsInLightString; ++j)
+            {
+                lights[runningLightControllerCounter] = genericLightPart2[j];
+                lightCtrl[runningLightControllerCounter] = lights[runningLightControllerCounter].GetComponent<Z_InidivdualLightCtrl>();
+                if (lightCtrl[runningLightControllerCounter].isGlobe)
+                {
+                    lightCtrl[runningLightControllerCounter].treeId = 2;
+                    lights[runningLightControllerCounter].name = "T2_gb_lt_" + j;
+                    lightCtrl[runningLightControllerCounter].DMXUniverse = whichDMXUniverse;
+                    lightCtrl[runningLightControllerCounter].screenPosition = lights[runningLightControllerCounter].transform.position;
+                    rangeFromWallTarget = Vector3.Distance(lights[runningLightControllerCounter].transform.position, globeWaveCenterPoint.transform.position);
+                    lightCtrl[runningLightControllerCounter].globeRangeFromWall = rangeFromWallTarget;
+                    lightCtrl[runningLightControllerCounter].DMXStartChannel = runningDMXChannelCounter;
+
+                    runningLightControllerCounter += 1;
+                    runningDMXChannelCounter += numberOfDMXChannelsPerLight;
+                }
+            }
+        }
+
+        List<GameObject> genericRelayLightPart = new List<GameObject>();
+        Transform parent_LightString3 = relayGlobeString.transform;
+        TreePartOrg relayPartOrg = relayGlobeString.GetComponent<TreePartOrg>();
+
+        foreach (Transform child_t in parent_LightString3)
+        {
+            if (child_t != null)
+                genericRelayLightPart.Add(child_t.gameObject);
+        }
+
+        numberOfGlobeLightsInLightString = genericRelayLightPart.Count;
+        actualNumberOfGlobeLights += numberOfGlobeLightsInLightString;
+        runningDMXChannelCounter = relayPartOrg.treePartDMXStartChannel - 1;
+        whichDMXUniverse = relayPartOrg.treePartUniverse - 1;
+
+        for (j = 0; j < numberOfGlobeLightsInLightString; ++j)
+        {
+            lights[runningLightControllerCounter] = genericRelayLightPart[j];
+            lightCtrl[runningLightControllerCounter] = lights[runningLightControllerCounter].GetComponent<Z_InidivdualLightCtrl>();
+            if (lightCtrl[runningLightControllerCounter].isGlobe)
+            {
+                lightCtrl[runningLightControllerCounter].treeId = 3;
+                lights[runningLightControllerCounter].name = "T3_gb_lt_" + j;
+                lightCtrl[runningLightControllerCounter].DMXUniverse = whichDMXUniverse;
+                lightCtrl[runningLightControllerCounter].screenPosition = lights[runningLightControllerCounter].transform.position;
+                rangeFromWallTarget = Vector3.Distance(lights[runningLightControllerCounter].transform.position, globeWaveCenterPoint.transform.position);
+                lightCtrl[runningLightControllerCounter].globeRangeFromWall = rangeFromWallTarget;
+                lightCtrl[runningLightControllerCounter].DMXStartChannel = runningDMXChannelCounter;
+
+                runningLightControllerCounter += 1;
+                runningDMXChannelCounter += numberOfDMXChannelsPerLight;
+            }
+        }
+
+
+        appControl.logText("[TREEGLOBECTRL] Globes organized successfully. qty: " + actualNumberOfGlobeLights);
         initComplete = true;
-        turnOffAllLights();
+        fadeOutAllLights();
         globeWaveCenterPoint.SetActive(false);
-        return actualNumberOfLights;
-        
+        return actualNumberOfGlobeLights;
+
     }
 
     #endregion initialize

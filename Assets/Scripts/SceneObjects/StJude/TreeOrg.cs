@@ -6,10 +6,18 @@ using AAMVC.Unity;
 public class TreeOrg : MonoBehaviour
 {
     private LogTextCtrl logTextCtrl;
-
     private int numberOfDMXChannelsPerLight = 3;
-    
     public int treeID;
+    
+    public GameObject trunkGradPointA;
+    public GameObject trunkGradPointB;
+    public GameObject canopyGradPointA;
+    public GameObject canopyGradPointB;
+    private Vector3 trunkGradPointAPosition;
+    private Vector3 trunkGradPointBPosition;
+    private Vector3 canopyGradPointAPosition;
+    private Vector3 canopyGradPointBPosition;
+    
     private static int maxNUmberOfTrunks = 2;
     public int actualNumberOfTrunks = 0;
     public GameObject[] treeTrunks = new GameObject[maxNUmberOfTrunks];
@@ -18,9 +26,10 @@ public class TreeOrg : MonoBehaviour
     public int actualNumberOfCanopies = 0;
     public GameObject[] treeCanopies = new GameObject[maxNUmberOfCanopies];
     private TreePartOrg[] canopyCtrl = new TreePartOrg[maxNUmberOfCanopies];
+    private static int maxNUmberOfGlobes = 8;
     
-    public GameObject treeGlobes;
-    private TreeGlobeCtrl treeGlobeCtrl;
+    //public GameObject treeGlobes;
+    //private TreeGlobeCtrl treeGlobeCtrl;
     
     private void Awake()
     {
@@ -30,7 +39,10 @@ public class TreeOrg : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        trunkGradPointAPosition = trunkGradPointA.transform.position;
+        trunkGradPointBPosition = trunkGradPointB.transform.position;
+        canopyGradPointAPosition = canopyGradPointA.transform.position;
+        canopyGradPointBPosition = canopyGradPointB.transform.position;
     }
 
     // Update is called once per frame
@@ -47,30 +59,23 @@ public class TreeOrg : MonoBehaviour
         {
             for (i = 0; i < actualNumberOfTrunks; ++i)
             {
-                trunkCtrl[i].adjustColorsTo(whichColor0, whichColor1);
+                trunkCtrl[i].adjustColorsToAndDistributeColorBetweenPoints(whichColor0, whichColor1, trunkGradPointAPosition, trunkGradPointBPosition);
             }
         }
-        else if (whichColorChannel ==1) // secondary - some/most canopies
+        else if (whichColorChannel ==1) // secondary = canopies
         {
             for (i = 0; i < actualNumberOfCanopies; ++i)
             {
-                if (!canopyCtrl[i].isTertiaryCanopy)
-                {
-                    canopyCtrl[i].adjustColorsTo(whichColor0, whichColor1);
-                }
-                
+                canopyCtrl[i].adjustColorsToAndDistributeColorBetweenPoints(whichColor0, whichColor1, canopyGradPointAPosition, canopyGradPointBPosition);
             }
         }
-        else if (whichColorChannel == 2) // tertiary - just a few canopies
+        /*
+        else if (whichColorChannel == 2) // globes 
         {
-            for (i = 0; i < actualNumberOfCanopies; ++i)
-            {
-                if (canopyCtrl[i].isTertiaryCanopy)
-                {
-                    canopyCtrl[i].adjustColorsTo(whichColor0, whichColor1);
-                }
-            }
-        }
+            
+                treeGlobeCtrl.adjustColorsTo(whichColor0, whichColor1);
+            
+        }*/
     }
     
     public void fadeOutAllLights()
@@ -80,17 +85,27 @@ public class TreeOrg : MonoBehaviour
         
         for (i = 0; i < actualNumberOfTrunks; ++i)
         {
-            trunkCtrl[i].adjustColorsTo(black, black);
+            trunkCtrl[i].adjustColorsToAndEvenlyGradient(black, black);
         }
         for (i = 0; i < actualNumberOfCanopies; ++i)
         { 
-            canopyCtrl[i].adjustColorsTo(black, black);
+            canopyCtrl[i].adjustColorsToAndEvenlyGradient(black, black);
         }
     }
     
     public void fadeInAllLights()
     {
+        Color white = Color.white;
+        int i;
         
+        for (i = 0; i < actualNumberOfTrunks; ++i)
+        {
+            trunkCtrl[i].adjustColorsToAndEvenlyGradient(white, white);
+        }
+        for (i = 0; i < actualNumberOfCanopies; ++i)
+        { 
+            canopyCtrl[i].adjustColorsToAndEvenlyGradient(white, white);
+        }
     }
     
     public int sortLightObjects(int whichTree)
@@ -130,6 +145,7 @@ public class TreeOrg : MonoBehaviour
         return valueToReturn;
     }
 
+    /*
     public int sortGlobeLights(int whichTree, int whichRunningDMXChannel) 
     {
         int valueToReturn = 0;
@@ -140,6 +156,7 @@ public class TreeOrg : MonoBehaviour
 
         return valueToReturn;
     }
+    */
 
     public void checkForColorChanges()
     {
@@ -155,6 +172,8 @@ public class TreeOrg : MonoBehaviour
             canopyCtrl[i].checkForColorChanges();
         }
     }
+    
+    
     
     
 }

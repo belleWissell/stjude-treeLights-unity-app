@@ -98,42 +98,19 @@ namespace AAMVC.Input
                     break;
                 case Key.RightArrow:
                 {
-                    appControl.testLightTogglesFromKeyboard();
+                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
+                    appControl.adjustCurrentLightPresetFromKeyboard(true);
                     break;
                 }
-                /*case Key.LeftArrow:
+                case Key.LeftArrow:
                 {
-                    appControl.testSendCommandToShowControl();
+                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
+                    appControl.adjustCurrentLightPresetFromKeyboard(false);
                     break;
-                }*/
+                }
                 case Key.Digit1:
                 {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.newDay);
-                    break;
-                } 
-                case Key.Digit2:
-                {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.midDay);
-                    break;
-                } 
-                case Key.Digit3:
-                {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.lateDay);
-                    break;
-                } 
-                case Key.Digit4:
-                {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.solidTreesNewDay);
-                    break;
-                } 
-                case Key.Digit5:
-                {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.solidTreesPeakDay);
-                    break;
-                } 
-                case Key.Digit6:
-                {
-                    appControl.switchColorModeFromKeyboardTo(ApplicationControl.TreeColorMode.solidTreesLateDay);
+                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
                     break;
                 } 
                 case Key.W:
@@ -149,7 +126,7 @@ namespace AAMVC.Input
                 } 
                 case Key.Digit9:
                 {
-                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
+                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.allOn);
                     break;
                 } 
                 /*case Key.K:

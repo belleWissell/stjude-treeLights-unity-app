@@ -33,6 +33,7 @@ public class AppConfig : Singleton<AppConfig>
         public AttractSettings attract;
         public AmbientModeTiming ambientModeTiming;
         public Window window;
+        public TreeColorPresetsDef treeColorPresets;
     }
     
     [System.Serializable]
@@ -113,6 +114,30 @@ public class AppConfig : Singleton<AppConfig>
         public string tree2bHex;
         public string tree3aHex;
         public string tree3bHex;
+    }
+    
+    [System.Serializable]
+    public class TreeColorPresetsDef
+    {
+        public TreeColorPresetDef[] treeColorPreset;
+    }
+    [System.Serializable]
+    public class TreeColorPresetDef
+    {
+        public string name;
+        public string theme;
+        public TreeColorDef treeColorA;
+        public TreeColorDef treeColorB;
+        public TreeColorDef treeColorC;
+    }
+    [System.Serializable]
+    public class TreeColorDef
+    {
+        public string trunkGradA;
+        public string trunkGradB;
+        public string canopyGradA;
+        public string canopyGradB;
+        public string globe;
     }
     
     [System.Serializable]
