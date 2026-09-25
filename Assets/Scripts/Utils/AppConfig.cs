@@ -24,12 +24,6 @@ public class AppConfig : Singleton<AppConfig>
         public LightControlSettings lightControlSettings;
         public DepthDataSettings depthDataSettings;
         public ShowControlSettings showControlSettings;
-        public lightColorSettings0 lightColorSettings0;
-        public lightColorSettings1 lightColorSettings1;
-        public lightColorSettings2 lightColorSettings2;
-        public solidTreeColorSettings0 solidTreeColorSettings0;
-        public solidTreeColorSettings1 solidTreeColorSettings1;
-        public solidTreeColorSettings2 solidTreeColorSettings2;
         public AttractSettings attract;
         public AmbientModeTiming ambientModeTiming;
         public Window window;
@@ -53,67 +47,6 @@ public class AppConfig : Singleton<AppConfig>
         public int port;
         public int numberOfPanelsToTrack;
         public bool doConnectToDepth;
-    }
-    
-    [System.Serializable]
-    public class lightColorSettings0
-    {
-        public string trunk1Hex;
-        public string trunk2Hex;
-        public string secondary1Hex;
-        public string secondary2Hex;
-        public string tertiary1Hex;
-        public string tertiary2Hex;
-    }
-    [System.Serializable]
-    public class lightColorSettings1
-    {
-        public string trunk1Hex;
-        public string trunk2Hex;
-        public string secondary1Hex;
-        public string secondary2Hex;
-        public string tertiary1Hex;
-        public string tertiary2Hex;
-    }
-    [System.Serializable]
-    public class lightColorSettings2
-    {
-        public string trunk1Hex;
-        public string trunk2Hex;
-        public string secondary1Hex;
-        public string secondary2Hex;
-        public string tertiary1Hex;
-        public string tertiary2Hex;
-    }
-    [System.Serializable]
-    public class solidTreeColorSettings0
-    {
-        public string tree1aHex;
-        public string tree1bHex;
-        public string tree2aHex;
-        public string tree2bHex;
-        public string tree3aHex;
-        public string tree3bHex;
-    }
-    [System.Serializable]
-    public class solidTreeColorSettings1
-    {
-        public string tree1aHex;
-        public string tree1bHex;
-        public string tree2aHex;
-        public string tree2bHex;
-        public string tree3aHex;
-        public string tree3bHex;
-    }
-    [System.Serializable]
-    public class solidTreeColorSettings2
-    {
-        public string tree1aHex;
-        public string tree1bHex;
-        public string tree2aHex;
-        public string tree2bHex;
-        public string tree3aHex;
-        public string tree3bHex;
     }
     
     [System.Serializable]

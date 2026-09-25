@@ -27,70 +27,6 @@
     "pingPongHoldOnTime": 160,
     "pingPongAdvanceTime": 120
   },
-  "lightColorSettings0": {
-    "trunk1Hex": "#74fffd",
-    "trunk2Hex": "#76daff",
-    "secondary1Hex": "#ffc181",
-    "secondary2Hex": "#ff9573",
-    "tertiary1Hex": "#75eeff",
-    "tertiary2Hex": "#ffa97c"
-  },
-  "lightColorSettings1": {
-    "trunk1Hex": "#77c7ff",
-    "trunk2Hex": "#77a4ff",
-    "secondary1Hex": "#fff58d",
-    "secondary2Hex": "#ffd386",
-    "tertiary1Hex": "#76b4ff",
-    "tertiary2Hex": "#ffea8a"
-  },
-  "lightColorSettings2": {
-    "trunk1Hex": "#7893ff",
-    "trunk2Hex": "#7872ff",
-    "secondary1Hex": "#ff8768",
-    "secondary2Hex": "#ff5e51",
-    "tertiary1Hex": "#767bff",
-    "tertiary2Hex": "#ff725e"
-  },
-  "solidTreeColorSettings0_Old": {
-    "tree1aHex": "#EEB38D",
-    "tree1bHex": "#ECAC8B",
-    "tree2aHex": "#9ECAD7",
-    "tree2bHex": "#9CCBD6",
-    "tree3aHex": "#76DBBA",
-    "tree3bHex": "#7FD7C0"
-  },
-  "solidTreeColorSettings1_Old": {
-    "tree1aHex": "#F3D392",
-    "tree1bHex": "#E7D78C",
-    "tree2aHex": "#9FB4D7",
-    "tree2bHex": "#9EBED7",
-    "tree3aHex": "#B3EA73",
-    "tree3bHex": "#C0E579"
-  },
-  "solidTreeColorSettings0": {
-    "tree1aHex": "#45D7E7",
-    "tree1bHex": "#9CE2EA",
-    "tree2aHex": "#52C8B1",
-    "tree2bHex": "#C6FDE8",
-    "tree3aHex": "#50D2E3",
-    "tree3bHex": "#ACDCDE"
-  },
-  "solidTreeColorSettings1": {
-    "tree1aHex": "#5CB365",
-    "tree1bHex": "#8EBC87",
-    "tree2aHex": "#66B7D9",
-    "tree2bHex": "#99CDD8",
-    "tree3aHex": "#91D46D",
-    "tree3bHex": "#C4DD82"
-  },
-  "solidTreeColorSettings2": {
-    "tree1aHex": "#77C6FF",
-    "tree1bHex": "#B6DBEE",
-    "tree2aHex": "#A2A8FF",
-    "tree2bHex": "#E3C7FA",
-    "tree3aHex": "#60D5FF",
-    "tree3bHex": "#B2E5F6"
-  },
   "attract": {
     "timeout": 60,
     "doTimeout": false
@@ -232,6 +168,181 @@
           "canopyGradA": "#50FEC5",
           "canopyGradB": "#50FEC5",
           "globe": "#000000"
+        }
+      },
+      {
+        "name": "Peak Day Colorblock",
+        "theme": "peak day",
+        "treeColorA": {
+          "trunkGradA": "#77A9FF",
+          "trunkGradB": "#77A9FF",
+          "canopyGradA": "#77CCFF",
+          "canopyGradB": "#77CCFF",
+          "globe": "#000000"
+        },
+        "treeColorB": {
+          "trunkGradA": "#77A9FF",
+          "trunkGradB": "#77A9FF",
+          "canopyGradA": "#77CCFF",
+          "canopyGradB": "#77CCFF",
+          "globe": "#77A9FF"
+        },
+        "treeColorC": {
+          "trunkGradA": "#77A9FF",
+          "trunkGradB": "#77A9FF",
+          "canopyGradA": "#77CCFF",
+          "canopyGradB": "#77CCFF",
+          "globe": "#77A9FF"
+        }
+      },
+      {
+        "name": "Peak Day Gradient",
+        "theme": "peak day",
+        "treeColorA": {
+          "trunkGradA": "#77CCFF",
+          "trunkGradB": "#77CCFF",
+          "canopyGradA": "#77A9FF",
+          "canopyGradB": "#B4FE5E",
+          "globe": "#000000"
+        },
+        "treeColorB": {
+          "trunkGradA": "#B4FE5E",
+          "trunkGradB": "#77A9FF",
+          "canopyGradA": "#B4FE5E",
+          "canopyGradB": "#77A9FF",
+          "globe": "#000000"
+        },
+        "treeColorC": {
+          "trunkGradA": "#77CCFF",
+          "trunkGradB": "#77CCFF",
+          "canopyGradA": "#77CCFF",
+          "canopyGradB": "#B4FE5E",
+          "globe": "#000000"
+        }
+      },
+      {
+        "name": "Peak Day Single Colors",
+        "theme": "peak day",
+        "treeColorA": {
+          "trunkGradA": "#77CCFF",
+          "trunkGradB": "#77CCFF",
+          "canopyGradA": "#77CCFF",
+          "canopyGradB": "#77CCFF",
+          "globe": "#B4FE5E"
+        },
+        "treeColorB": {
+          "trunkGradA": "#77A0FF",
+          "trunkGradB": "#77A0FF",
+          "canopyGradA": "#77A0FF",
+          "canopyGradB": "#77A0FF",
+          "globe": "#B4FE5E"
+        },
+        "treeColorC": {
+          "trunkGradA": "#77A9FF",
+          "trunkGradB": "#77A9FF",
+          "canopyGradA": "#77A9FF",
+          "canopyGradB": "#77A9FF",
+          "globe": "#B4FE5E"
+        }
+      },
+      {
+        "name": "Late Day Colorblock",
+        "theme": "late day",
+        "treeColorA": {
+          "trunkGradA": "#7788FF",
+          "trunkGradB": "#7788FF",
+          "canopyGradA": "#7873FE",
+          "canopyGradB": "#7873FE",
+          "globe": "#000000"
+        },
+        "treeColorB": {
+          "trunkGradA": "#7788FF",
+          "trunkGradB": "#7788FF",
+          "canopyGradA": "#7873FE",
+          "canopyGradB": "#7873FE",
+          "globe": "#FF5492"
+        },
+        "treeColorC": {
+          "trunkGradA": "#7788FF",
+          "trunkGradB": "#7788FF",
+          "canopyGradA": "#7873FE",
+          "canopyGradB": "#7873FE",
+          "globe": "#FF5492"
+        }
+      },
+      {
+        "name": "Late Day Gradient",
+        "theme": "late day",
+        "treeColorA": {
+          "trunkGradA": "#7873FE",
+          "trunkGradB": "#7873FE",
+          "canopyGradA": "#7788FF",
+          "canopyGradB": "#FF5E52",
+          "globe": "#000000"
+        },
+        "treeColorB": {
+          "trunkGradA": "#FF5E52",
+          "trunkGradB": "#7873FE",
+          "canopyGradA": "#FF5E52",
+          "canopyGradB": "#7788FF",
+          "globe": "#000000"
+        },
+        "treeColorC": {
+          "trunkGradA": "#7873FE",
+          "trunkGradB": "#7873FE",
+          "canopyGradA": "#7788FF",
+          "canopyGradB": "#FF5E52",
+          "globe": "#000000"
+        }
+      },
+      {
+        "name": "Late Day Single Colors",
+        "theme": "late day",
+        "treeColorA": {
+          "trunkGradA": "#7873FE",
+          "trunkGradB": "#7873FE",
+          "canopyGradA": "#7873FE",
+          "canopyGradB": "#7873FE",
+          "globe": "#FF5E52"
+        },
+        "treeColorB": {
+          "trunkGradA": "#7788FF",
+          "trunkGradB": "#7788FF",
+          "canopyGradA": "#7788FF",
+          "canopyGradB": "#7788FF",
+          "globe": "#FF5E52"
+        },
+        "treeColorC": {
+          "trunkGradA": "#8B66FE",
+          "trunkGradB": "#8B66FE",
+          "canopyGradA": "#8B66FE",
+          "canopyGradB": "#8B66FE",
+          "globe": "#FF5E52"
+        }
+      },
+      {
+        "name": "Rest Period",
+        "theme": "rest period",
+        "treeColorA": {
+          "trunkGradA": "#4262FE",
+          "trunkGradB": "#4262FE",
+          "canopyGradA": "#4262FE",
+          "canopyGradB": "#4262FE",
+          "globe": "#7F22A9"
+        },
+        "treeColorB": {
+          "trunkGradA": "#4262FE",
+          "trunkGradB": "#4262FE",
+          "canopyGradA": "#4262FE",
+          "canopyGradB": "#4262FE",
+          "globe": "#2640FF"
+        },
+        "treeColorC": {
+          "trunkGradA": "#4262FE",
+          "trunkGradB": "#4262FE",
+          "canopyGradA": "#4262FE",
+          "canopyGradB": "#4262FE",
+          "globe": "#2640FF"
         }
       }
     ]

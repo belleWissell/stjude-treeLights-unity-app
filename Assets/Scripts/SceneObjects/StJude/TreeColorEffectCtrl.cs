@@ -356,6 +356,7 @@ public class TreeColorEffectCtrl : MonoBehaviour
     }
     
 
+    /*
     public void adjustColorsTo(ApplicationControl.TreeColorMode whichNewColorMode)
     {
         string[] whichNewPrimaryHex = new string[2];
@@ -429,7 +430,7 @@ public class TreeColorEffectCtrl : MonoBehaviour
         }
         */
 
-    }
+    //}
 
     public void init() // called from initializeClassesAfterPause
     {

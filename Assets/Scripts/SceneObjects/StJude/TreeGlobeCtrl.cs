@@ -89,6 +89,8 @@ public class TreeGlobeCtrl : MonoBehaviour
                 lightCtrl[i].animatColorValueTo(lightOn, 10);
             else
                 lightCtrl[i].animatColorValueTo(lightOff, 10);
+            
+            lightCtrl[i].adjustGlobeDefaultColorTo(lightOff); // in case some are still sparkling
         }
     }
 

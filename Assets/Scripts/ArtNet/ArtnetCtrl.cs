@@ -151,8 +151,8 @@ public class ArtnetCtrl : MonoBehaviour
 
         //if (numberOfUnityUniverses > 2)
         //{
-            Array.Copy(_data2, _dataToSend2, numberOfData);
-            artnetManager.SetArtnetData(2, _dataToSend2);
+            //Array.Copy(_data2, _dataToSend2, numberOfData);
+            //artnetManager.SetArtnetData(2, _dataToSend2);
         //}
     }
 

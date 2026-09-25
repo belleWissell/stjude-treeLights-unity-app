@@ -934,6 +934,7 @@ namespace AAMVC.Unity
             modeFeedbackText.text = "PRESET: none (CUSTOM)";
         }
         
+        /*
         public void switchColorModeFromKeyboardTo(TreeColorMode whichNewColorMode)
         {
             currentTreeColorMode = whichNewColorMode;
@@ -966,7 +967,7 @@ namespace AAMVC.Unity
                     currentApplicationState = ApplicationState.ambientAnimation;
                     break;
             }
-        }
+        }*/
 
         public void startSparkleWaveFromKeyboard()
         {
