@@ -52,6 +52,12 @@ namespace AAMVC.Unity
         
         private bool MouseIsVisible = true;
         
+        [Header("Communications Objects **************************************")]
+        public GameObject networkEventCtrlObj;
+        private NetworkEventCtrl networkEventCtrl;
+
+        [Header("Light Control Objects **************************************")]
+        
         public GameObject lightControlObj;
         private Z_LightCtrl lightControl;
 
@@ -90,7 +96,13 @@ namespace AAMVC.Unity
         public GameObject artnetControlObj;
         private ArtnetCtrl artnetCtrl;
 
+        [Header("Mode and State Objects **************************************")]
+        //public string currentLightTheme = "none";
+
+        private bool doProceedToNextThemeOnNextUpdate = false; // for commands coming in from network
+        private bool doProceedToNextPresetOnNextUpdate = false;
         public TextMeshPro modeFeedbackText;
+
 
         public ApplicationState currentApplicationState;
         private ApplicationState prevApplicationState;
@@ -101,21 +113,12 @@ namespace AAMVC.Unity
         {
             loading,
             allOn,
-            ambientAnimation,
-            reactToPresence,
             allOff,
-            testing
-        }
-
-        public TreeColorMode currentTreeColorMode;
-        public enum TreeColorMode
-        {
+            testPreset,
             newDay,
-            midDay,
+            peakDay,
             lateDay,
-            solidTreesNewDay,
-            solidTreesPeakDay,
-            solidTreesLateDay
+            restPeriod
         }
 
 
@@ -198,24 +201,10 @@ namespace AAMVC.Unity
             lightControl = lightControlObj.GetComponent<Z_LightCtrl>();
             treeColorEffectCtrl = colorEffectObj.GetComponent<TreeColorEffectCtrl>();
             
-            //proxFeedbackCtrl = sensorProxFeedbackObj.GetComponent<ProxFeedbackCtrl>();
-            
             artnetCtrl = artnetControlObj.GetComponent<ArtnetCtrl>();
-            /*
-            artnetCtrl[0] = artnetControlObj[0].GetComponent<ArtnetCtrl>();
-            artnetCtrl[1] = artnetControlObj[1].GetComponent<ArtnetCtrl>();
-            artnetCtrl[2] = artnetControlObj[2].GetComponent<ArtnetCtrl>();
-            artnetCtrl[3] = artnetControlObj[3].GetComponent<ArtnetCtrl>();*/
             
-            //feedbackAudioCtrl = audioCtrlObj.GetComponent<FeedbackAudioCtrl>();
-
-            //artnetDataDisplayCtrl = artnetFeedbackObj.GetComponent<ArtnetDataDisplayCtrl>();
+            networkEventCtrl = networkEventCtrlObj.GetComponent<NetworkEventCtrl>();
             
-            //sacnControl = sacnControlObj.GetComponent<SACNCtrl>();
-            
-            //dmxLightCtrl = dmxCtrlObj.GetComponent<DMXLightCtrl>();
-            
-            //audioCtrl = audioControlObj.GetComponent<AudioCtrl>();
             loadingMessage.SetActive(true);
             
             modeFeedbackText.text = "Mode: LOADING";
@@ -242,7 +231,10 @@ namespace AAMVC.Unity
             
             //transmitDataToDmx01 = new TransmitDataToDMX(config.lightControlSettings.lightTransmitIpAddress, config.lightControlSettings.lightTransmitPort, config.lightControlSettings.doConnectToLightController);
 
-            
+            if (config.kioskCommsDataSettings.doConnectToInterComputerClient)
+            {
+                networkEventCtrl.initializeNetworkConnection(config.kioskCommsDataSettings.ipAddress, config.kioskCommsDataSettings.port, config.kioskCommsDataSettings.appID);
+            }
             
             artnetCtrl.initAndConnectArtNet();
             
@@ -251,17 +243,6 @@ namespace AAMVC.Unity
 
             //lightControl.assignActualNumberOfRegions(config.depthDataSettings.numberOfPanelsToTrack);
             treeColorEffectCtrl.init();
-            /*
-            for (i = 0; i < config.depthDataSettings.numberOfPanelsToTrack; ++i)
-            {
-                lightControl.assignRegionPositionFromProxFeedback(i, proxFeedbackCtrl.regionPosition[i]);
-            }
-
-            if (config.showControlSettings.doConnectToShowControl)
-            {
-                showControlCtrl.setNetworkSettingsAndInitConnection(config.showControlSettings.stringToSend, config.showControlSettings.ipAddress, config.showControlSettings.sendPort, config.showControlSettings.receivePort);
-            }*/
-            
             
             initComplete = true;
 
@@ -272,11 +253,11 @@ namespace AAMVC.Unity
             }
             else
             { */
-                currentApplicationState = ApplicationState.ambientAnimation;
+                currentApplicationState = ApplicationState.allOff;
             //}
-            
-            
-            
+
+            networkEventCtrl.requestCurrentModeFromOrchestrator();
+
         }
 
 
@@ -301,6 +282,18 @@ namespace AAMVC.Unity
                 }
             }
 
+            if (doProceedToNextThemeOnNextUpdate)
+            {
+                doProceedToNextThemeOnNextUpdate = false;
+                doProceedToNextTheme();
+            }
+
+            if (doProceedToNextPresetOnNextUpdate)
+            {
+                doProceedToNextPresetOnNextUpdate = false;
+                adjustTreeColorsToNewCurrentTheme();
+            }
+            
             if (currentApplicationState != prevApplicationState)
             {
                 adjustToNewApplicationState();
@@ -316,6 +309,7 @@ namespace AAMVC.Unity
                 gameWindowResolution.y = Screen.height;
             }
 
+            
             if (!currentlyInOrthographicView)
             {
                 int doUpdateCamera = SceneViewCameraControlVar.plotCameraPos();
@@ -323,16 +317,6 @@ namespace AAMVC.Unity
                 SceneCamera.transform.position = SceneViewCameraControlVar.getCameraPosition();
                 SceneCamera.transform.LookAt(SceneViewCameraControlVar.getCameraTarget());
             }
-
-            if (initComplete)
-            {
-                //updateIndividualDetectionStatus();
-                //if (currentApplicationState == ApplicationState.reactToPresence)
-                //{
-                //    checkForActivatedAreaAndAlertLights();
-                //}
-            }
-
         }
 
         
@@ -370,42 +354,6 @@ namespace AAMVC.Unity
                 logText("[APPCTRL] presence reset");
             }
         }
-
-        /*
-        private void checkForActivatedAreaAndAlertLights()
-        {
-            bool isAnyRegionActive = false;
-            for (int i = 0; i < config.depthDataSettings.numberOfPanelsToTrack; ++i)
-            {
-                if (sensorListenCtrl01.isRegionHot(i))
-                {
-                    isAnyRegionActive = true;
-                    if (!lightControl.regionIsActivated[i])
-                    {
-                        lightControl.regionIsActivated[i] = true;
-                        //lightControl.activateLightsInvicinityOf(i);
-                    }
-                }
-                else
-                {
-                    if (lightControl.regionIsActivated[i])
-                    {
-                        lightControl.regionIsActivated[i] = false;
-                        //lightControl.deactivateLightsInvicinityOf(i);
-                    }
-                }
-            }
-
-            if (!isAnyRegionActive)
-            {
-                lightControl.resumeAmbientAnimation();
-            }
-            else
-            {
-                lightControl.stopAmbientAnimation();
-            }
-        } */
-
 
         
         public void toggleOutputFromUI(int whichOutput)
@@ -459,57 +407,7 @@ namespace AAMVC.Unity
         // ************************************************************************************************
         // start of interactivity
 
-        //public void playSampleVids()
-        //{
-        //    videoTestObjCtrl.playAllAnims();
-        //}
-
-        private void adjustToNewApplicationState()
-        {
-            logTextCtrl.logText("[APPCTRL] switching state from " + prevApplicationState.ToString() + " to "+currentApplicationState.ToString(), config.debugMode);
-
-            prevApplicationState = currentApplicationState;
-            
-            
-            
-            switch (currentApplicationState)
-            {
-                case ApplicationState.allOn:
-                    lightControl.turnOnAllLights();
-                    lightControl.stopAmbientAnimation();
-                    //lightControl.turnOffAllLights();
-                    //lightControl.stopLightTestCycle();
-                    //lightControl.startLightAmbientWaves();
-                    modeFeedbackText.text = "MODE: "+currentApplicationState.ToString();
-                    break;
-                case ApplicationState.testing:
-                    lightControl.toggleAllLightboxesOrLightsOn();
-                    lightControl.stopAmbientAnimation();
-                    //lightControl.stopLightAmbientWaves();
-                    break;
-                case ApplicationState.allOff:
-                    //lightControl.stopLightTestCycle();
-                    lightControl.turnOffAllLights();
-                    lightControl.stopAmbientGlobeSparkle();
-                    //lightControl.stopLightAmbientWaves();
-                    modeFeedbackText.text = "MODE: "+currentApplicationState.ToString();
-                    break;
-                case ApplicationState.ambientAnimation:
-                    //lightControl.stopLightTestCycle();
-                    //lightControl.fadeOutAllLightsIgnoringReactive();
-                    //lightControl.launchAmbientAnimationFromTheStart();
-                    //lightControl.stopLightAmbientWaves();
-                    lightControl.startAmbientGlobeSparkle();
-                    break;
-                case ApplicationState.reactToPresence:
-                    //lightControl.stopLightTestCycle();
-                    lightControl.turnOffAllLights();
-                    lightControl.fadeOutAllLightsIgnoringReactive();
-                    //lightControl.resumeAmbientAnimation();
-                    //lightControl.stopLightAmbientWaves();
-                    break;
-            }
-        }
+        
 
         /*
         public void testSendCommandToShowControl()
@@ -531,67 +429,114 @@ namespace AAMVC.Unity
         // **************************************
        
         // **************************************
-        // used for real-time dragging
-        public void updateVerticalDrag(float whichDist)
-        {
-            
-        }
+        
 
-        public void updateHorzDrag(float whichDist)
+        public void toggleManualVsAutoDataFromKeyboard()
         {
-            
-        }
-
-        public void haltDrag()
-        {
-           
-        }
-        // **************************************
-        
-        // **************************************
-        // used for simple dragging
-        public void startVertDrag(bool goingDownward)
-        {
-        }
-        
-        public void startHorzDrag(bool goingRight)
-        {
-        }
-        // **************************************
-        
-        
-        
-        public void buttonPressEvent(string whichButtonName)
-        {
-            logText("[CTRL] presse event on "+whichButtonName);
-            
-            switch (whichButtonName)
+            for (int i = 0; i < numberOfArtNetUniverses; ++i)
             {
-                
-            }
-        }
-
-        
-        public void togglePerspectiveView()
-        {
-            if (currentlyInOrthographicView) // switch to perspective view
-            {
-                SceneCamera.orthographic = false;
-                SceneCamera.farClipPlane = 5000;
-                currentlyInOrthographicView = false;
-            }
-            else // switch to orthographic view
-            {
-                SceneCamera.orthographic = true;
-                SceneCamera.farClipPlane = 3000;
-                
-                //SceneCamera.transform.position = SceneViewCameraControlVar.getCameraPosition();
-                SceneCamera.transform.position = SceneViewCameraControlVar.getCameraOrbitZero();
-                SceneCamera.transform.LookAt(SceneViewCameraControlVar.getCameraTarget());
-                currentlyInOrthographicView = true;
+                //artnetCtrl.toggleManualInput();
             }
 
         }
+
+        public void toggleArtnetConnection()
+        {
+            for (int i = 0; i < numberOfArtNetUniverses; ++i)
+            {
+                //artnetCtrl.toggleConnection();
+            }
+        }
+        
+        public void startStopCameraOrbit()
+        {
+            SceneViewCameraControlVar.toggleCameraOrbit();
+        }
+
+        public void sendTestSacnData()
+        {
+            //sacnControl.toggleSendTestDataFromKeyboard3();
+        }
+
+        public void toggleSacnStreamFromKeyboard()
+        {
+            //sacnControl.toggleSacnStreamFromKeyboard();
+        }
+        
+        
+        // ************************************************
+        // 3D scene object interactivity
+        public void toggleMouse()
+        {
+            if (MouseIsVisible)
+            {
+                Cursor.visible = false;
+                MouseIsVisible = false;
+            }
+            else
+            {
+                Cursor.visible = true;
+                MouseIsVisible = true;
+            }
+        }
+       
+        // ************************************************
+        // UI events
+        
+        
+        // end of interactivity
+        // ************************************************************************************************
+
+        #endregion interactivity
+
+        
+        #region control object interrops
+
+        
+        private void adjustToNewApplicationState()
+        {
+            logTextCtrl.logText("[APPCTRL] switching state from " + prevApplicationState.ToString() + " to "+currentApplicationState.ToString(), config.debugMode);
+
+            prevApplicationState = currentApplicationState;
+            
+            
+            
+            switch (currentApplicationState)
+            {
+                case ApplicationState.allOn:
+                    lightControl.turnOnAllLights();
+                    modeFeedbackText.text = "MODE: "+currentApplicationState.ToString();
+                    break;
+                case ApplicationState.testPreset: // special case presets in the config file for testing
+                    adjustTreeColorsToNewCurrentTheme();
+                    break;
+                case ApplicationState.allOff:
+                    lightControl.turnOffAllLights();
+                    lightControl.stopAmbientGlobeSparkle();
+                    modeFeedbackText.text = "MODE: "+currentApplicationState.ToString();
+                    break;
+                case ApplicationState.newDay:
+                    lightControl.startAmbientGlobeSparkle();
+                    adjustTreeColorsToNewCurrentTheme();
+                    break;
+                case ApplicationState.peakDay:
+                    lightControl.startAmbientGlobeSparkle();
+                    adjustTreeColorsToNewCurrentTheme();
+                    break;
+                case ApplicationState.lateDay:
+                    lightControl.startAmbientGlobeSparkle();
+                    adjustTreeColorsToNewCurrentTheme();
+                    break;
+                case ApplicationState.restPeriod:
+                    lightControl.startAmbientGlobeSparkle();
+                    adjustTreeColorsToNewCurrentTheme();
+                    break;
+            }
+        }
+        
+        
+        // **************************************
+        
         
         private void setDebugMode(bool whichDebugMode)
         {
@@ -646,229 +591,86 @@ namespace AAMVC.Unity
                 textLogIsVisible = true;
             }
         }
+        
+        // **************************************
 
-        public void toggleManualVsAutoDataFromKeyboard()
+
+        public void adjustCurrentStateWithStringFromNetwork(string whichNewState)
         {
-            for (int i = 0; i < numberOfArtNetUniverses; ++i)
+            if (whichNewState != currentApplicationState.ToString())
             {
-                //artnetCtrl.toggleManualInput();
+                try
+                {
+                    currentApplicationState = (ApplicationState)Enum.Parse(typeof(ApplicationState), whichNewState);
+                }
+                catch (Exception e)
+                {
+                    logText("[APPCTRL] trying to update state to: " + whichNewState + " which is not a valid state.");
+                }
             }
-
         }
 
-        public void toggleArtnetConnection()
+        public void proceedToNextPresetFromNetwork(string whichNewState)
         {
-            for (int i = 0; i < numberOfArtNetUniverses; ++i)
+            if (whichNewState != currentApplicationState.ToString()) // make sure theme didn't change
             {
-                //artnetCtrl.toggleConnection();
-            }
-        }
-        
-        public void startStopCameraOrbit()
-        {
-            SceneViewCameraControlVar.toggleCameraOrbit();
-        }
-
-        public void sendTestSacnData()
-        {
-            //sacnControl.toggleSendTestDataFromKeyboard3();
-        }
-
-        public void toggleSacnStreamFromKeyboard()
-        {
-            //sacnControl.toggleSacnStreamFromKeyboard();
-        }
-        /*
-        public void testLightsUp()
-        {
-            textLog.logText("[LIGHTS UP]", true);
-            lightControl.fadeUpAllLights();
-        }
-        public void testLightsDown()
-        {
-            textLog.logText("[LIGHTS DOWN]", true);
-            lightControl.fadeOutAllLights();
-        }*/
-
-        /*
-        public void DMXcheckForUniverses()
-        {
-            textLog.logText("[UNiVERSE test]", true);
-            //dmxLightCtrl.checkForUniverseFromKeyboard();
-
-        }
-        public void DMXsendTestData()
-        {
-            textLog.logText("[DatA test]", true);
-            //dmxLightCtrl.sendTestDataFromKeyboard();
-
-        }
-        */
-        
-        /*
-        public void setLightModeTo(int whichMode)
-        {
-            lightControl.adjustLightLevelsToMode(whichMode);
-        }*/
-
-        /*
-        public void startRunOfShow()
-        {
-            lightControl.startRunOfShow();
-            //feedbackAudioCtrl.startRunOfShow();
-            
-        }
-        public void stopRunOfShow()
-        {
-            lightControl.stopRunOfShow();
-            //feedbackAudioCtrl.stopRunOfShow();
-            
-        }*/
-
-
-        /*
-        public void openSquirrelPortal()
-        {
-            openAnimal(2);
-        }
-        public void closeSquirrelPortal()
-        {
-            closeAnimal(2);
-        }  
-        public void openDeerPortal()
-        {
-            openAnimal(5);
-        }
-        public void closeDeerPortal()
-        {
-            closeAnimal(5);
-        }
-        
-        private void openAnimal(int whichAnimal)
-        {
-            animalCtrl.animateBlockIn(whichAnimal);
-            titleFeedbackCtrl.animateInLabel(whichAnimal);
-        }
-        private void closeAnimal(int whichAnimal)
-        {
-            animalCtrl.animateBlockOut(whichAnimal);
-            titleFeedbackCtrl.animateOutLabel(whichAnimal);
-        }
-        */
-        
-        // ************************************************
-        // 3D scene object interactivity
-        public void toggleMouse()
-        {
-            if (MouseIsVisible)
-            {
-                Cursor.visible = false;
-                MouseIsVisible = false;
+                try
+                {
+                    currentApplicationState = (ApplicationState)Enum.Parse(typeof(ApplicationState), whichNewState);
+                }
+                catch (Exception e)
+                {
+                    logText("[APPCTRL] trying to update state to: " + whichNewState + " which is not a valid state.");
+                }
             }
             else
             {
-                Cursor.visible = true;
-                MouseIsVisible = true;
+                goToNextPresetWithCurrentThemeFromNetwork();
             }
         }
-        public void onMouseOverSceneObject(int whichDataPoint, Vector3 whichPositionOnScreen)
+        
+        public void adjustCurrentStateWithString(string whichNewState)
         {
-            //Debug.Log("[APPCTRL] detected mouse over "+whichDataPoint);
-            /*if (VisualizationControl.isDataPointActive(whichDataPoint))
+            if (whichNewState != currentApplicationState.ToString())
             {
-                VisualizationControl.stopDataPointMotion(whichDataPoint);
-                HudController.showDataFor(whichDataPoint, whichPositionOnScreen);
+                try
+                {
+                    currentApplicationState = (ApplicationState)Enum.Parse(typeof(ApplicationState), whichNewState);
+                }
+                catch (Exception e)
+                {
+                    logText("[APPCTRL] trying to update state to: " + whichNewState + " which is not a valid state.");
+                }
+            }
+            /*{
+                switch (whichNewState)
+                {
+                    case "allOn":
+                        currentApplicationState = ApplicationState.allOn;
+                        break;
+                    case "allOff":
+                        currentApplicationState = ApplicationState.allOff;
+                        break;
+                    case "newDay":
+                        currentApplicationState = ApplicationState.newDay;
+                        //currentLightTheme = "newDay";
+                        //goToNextPresetWithCurrentThemeFromNetwork();
+                        break;
+                    case "peakDay":
+                        currentLightTheme = "peakDay";
+                        goToNextPresetWithCurrentThemeFromNetwork();
+                        break;
+                    case "lateDay":
+                        currentLightTheme = "lateDay";
+                        goToNextPresetWithCurrentThemeFromNetwork();
+                        break;
+                    case "restPeriod":
+                        currentLightTheme = "restPeriod";
+                        goToNextPresetWithCurrentThemeFromNetwork();
+                        break;
+                }
             }*/
         }
-        public void onMouseOutOfSceneObject()
-        {
-            /*
-            VisualizationControl.freeDataPoints();
-            HudController.hideDataBox();*/
-        }
-        
-        // ************************************************
-        // Background (camera navigation) events
-
-        public void onMouseDownOnBackground(float whichMouseX, float whichMouseY)
-        {
-            SceneViewCameraControlVar.mouseDn(whichMouseX, whichMouseY);
-        }
-
-        public void onMouseDragOnBackground(float whichMouseX, float whichMouseY)
-        {
-            SceneViewCameraControlVar.mouseMove(whichMouseX, whichMouseY);
-        }
-
-        public void onMouseUpOnBackground()
-        {
-            SceneViewCameraControlVar.mouseUp();
-        }
-
-        public void onMouseScrollOnBackground(float whichScrollAmnt)
-        {
-            SceneViewCameraControlVar.mouseWheel(whichScrollAmnt);
-        }
-
-        // ************************************************
-        // UI events
-        
-        public void onMouseUpOnUI() // used mostly for drag events
-        {
-            //HudController.onMouseUpUI();
-            //userInterfaceCtrl.onMouseOutUI();
-        }
-    
-        public void onMouseHitUIButton(int whichButton)
-        {
-            //HudController.mouseDownButton(whichButton);
-            //userInterfaceCtrl.mouseDownButton(whichButton);
-
-        }
-    
-        public void onMouseOverUIButton(int whichButton)
-        {
-            //HudController.mouseOverButton(whichButton);
-            //userInterfaceCtrl.mouseOverButton(whichButton);
-        }
-    
-        public void onMouseOutOfUI()
-        {
-            //HudController.onMouseUpUI();
-            //HudController.onMouseUpScroll();
-            //userInterfaceCtrl.onMouseOutUI();
-
-        }
-    
-        public void onMouseRolledOutOfUI()
-        {
-            //HudController.onMouseUpUI();
-            //userInterfaceCtrl.onMouseOutUI();
-
-        }
-    
-        // ************************************************
-        // Scroll Bar events
-    
-        public void onMouseRolledOutOfScroll()
-        {
-            //HudController.onMouseUpScroll();
-        }
-    
-        public void onMouseHitScrollBar(float whichXPos)
-        {
-            
-            //HudController.updateScrollPosn(whichXPos);
-        }
-        
-        // end of interactivity
-        // ************************************************************************************************
-
-        #endregion interactivity
-
-        
-        #region control object interrops
-        
         
         public void updateAllTreeColorsTo(int whichColorChannel, Color whichColor0, Color whichColor1)
         {
@@ -895,19 +697,59 @@ namespace AAMVC.Unity
             lightControl.updateTreeGlobeColorTo(whichTreeIndex, whichColor0);
         }
         
-        public void testLightTogglesFromKeyboard()
-        {
-            if (currentApplicationState != ApplicationState.testing)
-                currentApplicationState = ApplicationState.testing;
-            else
-                lightControl.toggleAllLightboxesOrLightsOn();
-        }
         
         public void changeStateFromKeyboardTo(ApplicationState whichNewState) // allOff, allon, reactToPresence, testing  // letters 1, 2, 3, 4
         {
-            
             currentApplicationState = whichNewState;
+        }
+
+        private void goToNextPresetWithCurrentThemeFromNetwork() // outside of the draw loop
+        {
+            /*
+            currentTreeColorPresetIndex++;
+            if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
+                currentTreeColorPresetIndex = 0;
+
+            while (config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme != currentApplicationState.ToString()) // march through all themes until next light mode is selected
+            {
+                currentTreeColorPresetIndex += 1;
+                if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
+                    currentTreeColorPresetIndex = 0;
+            }*/
+
+            doProceedToNextPresetOnNextUpdate = true;
+        }
+        
+        private void goToNextPresetWithCurrentTheme() // outside of the draw loop
+        {
+            currentTreeColorPresetIndex++;
+            if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
+                currentTreeColorPresetIndex = 0;
+
+            while (config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme != currentApplicationState.ToString()) // march through all themes until next light mode is selected
+            {
+                currentTreeColorPresetIndex += 1;
+                if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
+                    currentTreeColorPresetIndex = 0;
+            }
+        }
+
+
+        private void doProceedToNextTheme() // new theme came in off draw cycle, we are catching up here
+        {
+            //currentApplicationState = ApplicationState.ambientAnimation;
+            adjustCurrentStateWithString(config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme);
             
+            //currentLightTheme = config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme;
+            //treeColorEffectCtrl.changeColorSchemeTo(currentTreeColorPresetIndex);
+            
+            //modeFeedbackText.text = "PRESET: # "+ currentTreeColorPresetIndex +"\nTHEME: " + currentApplicationState.ToString();
+            //modeFeedbackText.text += "\nNAME: "+ config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].name;
+        }
+
+        private void doProceedToNextPreset()
+        {
+            adjustTreeColorsToNewCurrentTheme();
         }
 
         public void adjustCurrentLightPresetFromKeyboard(bool doGoForward)
@@ -916,59 +758,39 @@ namespace AAMVC.Unity
                 currentTreeColorPresetIndex++;
             else
                 currentTreeColorPresetIndex--;
-            
+
             if (currentTreeColorPresetIndex >= config.treeColorPresets.treeColorPreset.Length)
                 currentTreeColorPresetIndex = 0;
             else if (currentTreeColorPresetIndex < 0)
                 currentTreeColorPresetIndex = config.treeColorPresets.treeColorPreset.Length - 1;
 
+            //changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
+            //currentLightTheme = config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme;
+            adjustCurrentStateWithString(config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme);
+
+            //treeColorEffectCtrl.changeColorSchemeTo(currentTreeColorPresetIndex);
+
+            //modeFeedbackText.text = "PRESET: # "+ currentTreeColorPresetIndex +"\nTHEME: " + currentLightTheme;
+            //modeFeedbackText.text += "\nNAME: "+ config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].name;
+        }
+        
+        private void adjustTreeColorsToNewCurrentTheme()
+        {
+            //if (currentTreeColorPresetIndex < 0) // special case on app launch (index = -1)
+                goToNextPresetWithCurrentTheme();
             
             treeColorEffectCtrl.changeColorSchemeTo(currentTreeColorPresetIndex);
             
-            modeFeedbackText.text = "PRESET: # "+ currentTreeColorPresetIndex +"\nTHEME: " + config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].theme;
+            modeFeedbackText.text = "PRESET: # "+ currentTreeColorPresetIndex +"\nTHEME: " + currentApplicationState.ToString();
             modeFeedbackText.text += "\nNAME: "+ config.treeColorPresets.treeColorPreset[currentTreeColorPresetIndex].name;
-        }
 
+        }
+        
         public void updateModeFeedbackToCustom()
         {
             modeFeedbackText.text = "PRESET: none (CUSTOM)";
         }
         
-        /*
-        public void switchColorModeFromKeyboardTo(TreeColorMode whichNewColorMode)
-        {
-            currentTreeColorMode = whichNewColorMode;
-            treeColorEffectCtrl.adjustColorsTo(whichNewColorMode);
-
-            switch (whichNewColorMode)
-            {
-                case TreeColorMode.newDay:
-                    modeFeedbackText.text = "MODE: new day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.midDay:
-                    modeFeedbackText.text = "MODE: mid day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.lateDay:
-                    modeFeedbackText.text = "MODE: late day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesNewDay:
-                    modeFeedbackText.text = "MODE: solids new day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesPeakDay:
-                    modeFeedbackText.text = "MODE: solids peak day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-                case TreeColorMode.solidTreesLateDay:
-                    modeFeedbackText.text = "MODE: solids Late day";
-                    currentApplicationState = ApplicationState.ambientAnimation;
-                    break;
-            }
-        }*/
-
         public void startSparkleWaveFromKeyboard()
         {
             lightControl.startWaveGlobeSparkle();
@@ -994,6 +816,7 @@ namespace AAMVC.Unity
         {
             Debug.Log("[APPCTRL] cleaning up, calling it quits");
             logTextCtrl.onProgramExit();
+            networkEventCtrl.onProgramExit();
             //sacnControl.onProgramExit();
             
             //transmitDataToDmx01.haltingProgram();

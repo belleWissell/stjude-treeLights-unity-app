@@ -152,9 +152,11 @@ public class TreeColorEffectCtrl : MonoBehaviour
         
         if (doupdateFeedback)
         {
-            if (currentPresetIndex == previousPresetIndex) 
-                appControl.updateModeFeedbackToCustom(); // colors changed, but not from a preset
-            
+            if (currentPresetIndex == previousPresetIndex)
+            {
+                if (currentPresetIndex != -1)
+                    appControl.updateModeFeedbackToCustom(); // colors changed, but not from a preset
+            }
         }
 
         if (currentPresetIndex != previousPresetIndex)

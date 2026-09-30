@@ -146,6 +146,13 @@ namespace AAMVC.CommunicationsAndControl
                 socket.Send(myName + ",setStateTo,"+whichNewState);
             
         }
+
+        public void sendRequestForCurrentState()
+        {
+            if (socket != null)
+                socket.Send(myName + ",requestCurrentState,true");
+        }
+
         public void sendNewStoryInFocus(int whichStory)
         {
             if (socket != null)

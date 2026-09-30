@@ -22,7 +22,7 @@ public class AppConfig : Singleton<AppConfig>
         public bool showFullScreen;
         public bool showMouse;
         public LightControlSettings lightControlSettings;
-        public DepthDataSettings depthDataSettings;
+        public KioskCommsDataSettings kioskCommsDataSettings;
         public ShowControlSettings showControlSettings;
         public AttractSettings attract;
         public AmbientModeTiming ambientModeTiming;
@@ -41,12 +41,12 @@ public class AppConfig : Singleton<AppConfig>
     }
     
     [System.Serializable]
-    public class DepthDataSettings
+    public class KioskCommsDataSettings
     {
+        public string appID;
         public string ipAddress;
         public int port;
-        public int numberOfPanelsToTrack;
-        public bool doConnectToDepth;
+        public bool doConnectToInterComputerClient = true;
     }
     
     [System.Serializable]

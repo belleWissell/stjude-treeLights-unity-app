@@ -98,19 +98,17 @@ namespace AAMVC.Input
                     break;
                 case Key.RightArrow:
                 {
-                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
                     appControl.adjustCurrentLightPresetFromKeyboard(true);
                     break;
                 }
                 case Key.LeftArrow:
                 {
-                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
                     appControl.adjustCurrentLightPresetFromKeyboard(false);
                     break;
                 }
                 case Key.Digit1:
                 {
-                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.ambientAnimation);
+                    appControl.changeStateFromKeyboardTo(ApplicationControl.ApplicationState.newDay);
                     break;
                 } 
                 case Key.W:

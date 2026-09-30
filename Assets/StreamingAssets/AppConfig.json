@@ -9,11 +9,11 @@
     "numberOfChannelsPerLight": 4,
     "doConnectToLightController": false
   },
-  "depthDataSettings": {
+  "kioskCommsDataSettings": {
+    "appID": "lightControl",
     "ipAddress": "224.1.1.1",
-    "port": 8031,
-    "numberOfPanelsToTrack": 16,
-    "doConnectToDepth": false
+    "port": 8675,
+    "doConnectToInterComputerClient" : true
   },
   "showControlSettings": {
     "ipAddress": "10.1.5.255",
@@ -47,7 +47,7 @@
     "treeColorPreset": [
       {
         "name": "extreme solids",
-        "theme": "(test preset)",
+        "theme": "testPreset",
         "treeColorA": {
           "trunkGradA": "#002C8E",
           "trunkGradB": "#002C8E",
@@ -72,7 +72,7 @@
       },
       {
         "name": "extreme grads",
-        "theme": "(test preset)",
+        "theme": "testPreset",
         "treeColorA": {
           "trunkGradA": "#002C8E",
           "trunkGradB": "#F10000",
@@ -97,7 +97,7 @@
       },
       {
         "name": "New Day Colorblock",
-        "theme": "new day",
+        "theme": "newDay",
         "treeColorA": {
           "trunkGradA": "#75E0FF",
           "trunkGradB": "#75E0FF",
@@ -122,7 +122,7 @@
       },
       {
         "name": "New Day Gradient",
-        "theme": "new day",
+        "theme": "newDay",
         "treeColorA": {
           "trunkGradA": "#63FEFD",
           "trunkGradB": "#63FEFD",
@@ -147,7 +147,7 @@
       },      
       {
         "name": "New Day Single Color",
-        "theme": "new day",
+        "theme": "newDay",
         "treeColorA": {
           "trunkGradA": "#63FEFD",
           "trunkGradB": "#63FEFD",
@@ -172,7 +172,7 @@
       },
       {
         "name": "Peak Day Colorblock",
-        "theme": "peak day",
+        "theme": "peakDay",
         "treeColorA": {
           "trunkGradA": "#77A9FF",
           "trunkGradB": "#77A9FF",
@@ -197,7 +197,7 @@
       },
       {
         "name": "Peak Day Gradient",
-        "theme": "peak day",
+        "theme": "peakDay",
         "treeColorA": {
           "trunkGradA": "#77CCFF",
           "trunkGradB": "#77CCFF",
@@ -222,7 +222,7 @@
       },
       {
         "name": "Peak Day Single Colors",
-        "theme": "peak day",
+        "theme": "peakDay",
         "treeColorA": {
           "trunkGradA": "#77CCFF",
           "trunkGradB": "#77CCFF",
@@ -247,7 +247,7 @@
       },
       {
         "name": "Late Day Colorblock",
-        "theme": "late day",
+        "theme": "lateDay",
         "treeColorA": {
           "trunkGradA": "#7788FF",
           "trunkGradB": "#7788FF",
@@ -272,7 +272,7 @@
       },
       {
         "name": "Late Day Gradient",
-        "theme": "late day",
+        "theme": "lateDay",
         "treeColorA": {
           "trunkGradA": "#7873FE",
           "trunkGradB": "#7873FE",
@@ -297,7 +297,7 @@
       },
       {
         "name": "Late Day Single Colors",
-        "theme": "late day",
+        "theme": "lateDay",
         "treeColorA": {
           "trunkGradA": "#7873FE",
           "trunkGradB": "#7873FE",
@@ -322,7 +322,7 @@
       },
       {
         "name": "Rest Period",
-        "theme": "rest period",
+        "theme": "restPeriod",
         "treeColorA": {
           "trunkGradA": "#4262FE",
           "trunkGradB": "#4262FE",
